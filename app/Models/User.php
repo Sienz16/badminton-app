@@ -16,6 +16,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'admin_verified_at',
+        'email_verified_at',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -25,6 +28,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'admin_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 

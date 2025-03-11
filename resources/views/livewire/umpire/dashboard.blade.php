@@ -1,4 +1,6 @@
 <div>
+    <x-pending-approval-notice />
+    
     <div class="flex h-full w-full flex-1 flex-col gap-8">
         <!-- Stats Overview -->
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

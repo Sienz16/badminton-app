@@ -32,7 +32,7 @@ class Login extends Component
 
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        if (!Auth::attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -43,7 +43,6 @@ class Login extends Component
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        // Get the appropriate dashboard route based on user role_id
         $dashboardRoute = match (Auth::user()->role_id) {
             'admin' => 'admin.dashboard',
             'umpire' => 'umpire.dashboard',
