@@ -3,9 +3,13 @@
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\Profile;
+use App\Livewire\Matches\Show as MatchShow;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Umpire\Dashboard as UmpireDashboard;
+use App\Livewire\Umpire\Matches\Matches as UmpireMatches;
+use App\Livewire\Umpire\Matches\Show as UmpireMatchShow;
 use App\Livewire\Player\Dashboard as PlayerDashboard;
+use App\Livewire\Player\Matches as PlayerMatches;
 use App\Http\Middleware\CheckRole;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -41,11 +45,15 @@ Route::middleware(['auth', CheckRole::class.':admin'])->prefix('admin')->name('a
 // Umpire Routes
 Route::middleware(['auth', CheckRole::class.':umpire'])->prefix('umpire')->name('umpire.')->group(function () {
     Route::get('/dashboard', UmpireDashboard::class)->name('dashboard');
+    Route::get('/matches', UmpireMatches::class)->name('matches');
+    Route::get('/matches/{match}', UmpireMatchShow::class)->name('matches.show');
 });
 
 // Player Routes
 Route::middleware(['auth', CheckRole::class.':player'])->prefix('player')->name('player.')->group(function () {
     Route::get('/dashboard', PlayerDashboard::class)->name('dashboard');
+    Route::get('/matches', PlayerMatches::class)->name('matches');
+    Route::get('/matches/{match}', MatchShow::class)->name('matches.show');
 });
 
 

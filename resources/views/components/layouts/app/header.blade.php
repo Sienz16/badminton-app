@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
@@ -21,7 +21,7 @@
                 <flux:tooltip :content="__('Search')" position="bottom">
                     <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
                 </flux:tooltip>
-                <flux:tooltip :content="__('Repository')" position="bottom">
+                {{-- <flux:tooltip :content="__('Repository')" position="bottom">
                     <flux:navbar.item
                         class="h-10 max-lg:hidden [&>div>svg]:size-5"
                         icon="folder-git-2"
@@ -29,8 +29,8 @@
                         target="_blank"
                         :label="__('Repository')"
                     />
-                </flux:tooltip>
-                <flux:tooltip :content="__('Documentation')" position="bottom">
+                </flux:tooltip> --}}
+                {{-- <flux:tooltip :content="__('Documentation')" position="bottom">
                     <flux:navbar.item
                         class="h-10 max-lg:hidden [&>div>svg]:size-5"
                         icon="book-open-text"
@@ -38,7 +38,7 @@
                         target="_blank"
                         label="Documentation"
                     />
-                </flux:tooltip>
+                </flux:tooltip> --}}
             </flux:navbar>
 
             <!-- Desktop User Menu -->
