@@ -20,8 +20,8 @@ class Court extends Model
 
     protected $casts = [
         'schedule_date' => 'date',
-        'start_time' => 'datetime:H:i',
-        'end_time' => 'datetime:H:i'
+        'start_time' => 'datetime',
+        'end_time' => 'datetime'
     ];
 
     public function venue(): BelongsTo
@@ -31,12 +31,55 @@ class Court extends Model
 
     public function match(): BelongsTo
     {
-        return $this->belongsTo(GameMatch::class);
+        return $this->belongsTo(GameMatch::class, 'match_id');
     }
 
-    public function isAvailable(): bool
+    public function isOccupied($checkDate = null, $checkTime = null): bool
     {
-        return $this->status === 'available';
+        // If no specific date is provided, use today
+        $checkDate = $checkDate ?? now()->toDateString();
+
+        // If court is in maintenance, it's not available
+        if ($this->status === 'maintenance') {
+            return true;
+        }
+
+        // If no date/time provided, consider current date/time
+        $checkDate = $checkDate ?? now()->toDateString();
+        $checkTime = $checkTime ?? now()->format('H:i:s');
+
+        // If no schedule, it's not occupied
+        if (!$this->schedule_date || !$this->start_time || !$this->end_time) {
+            return false;
+        }
+
+        // Check if the date matches
+        if ($this->schedule_date->toDateString() !== $checkDate) {
+            return false;
+        }
+
+        // If no specific time to check, just return true since it's booked for this date
+        if ($checkTime === null) {
+            return true;
+        }
+
+        // Convert times to Carbon for comparison
+        $checkDateTime = Carbon::parse($checkDate . ' ' . $checkTime);
+        $startDateTime = Carbon::parse($checkDate . ' ' . $this->start_time);
+        $endDateTime = Carbon::parse($checkDate . ' ' . $this->end_time);
+
+        // Check if the time falls within the scheduled period
+        return $checkDateTime->between($startDateTime, $endDateTime);
+    }
+
+    public function isAvailable($checkDate = null, $checkTime = null): bool
+    {
+        return !$this->isOccupied($checkDate, $checkTime);
+    }
+
+    public function hasMatchOn($date): bool
+    {
+        return $this->schedule_date?->toDateString() === $date;
     }
 
     public function hasScheduleConflict($date, $startTime, $endTime): bool

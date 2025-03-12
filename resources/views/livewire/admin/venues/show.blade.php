@@ -137,20 +137,29 @@
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">View and manage court schedules for this venue.</p>
             </div>
 
-            <!-- Date Selector -->
-            <div class="mb-6 max-w-xs">
-                <label for="schedule-date" class="block text-sm font-medium text-zinc-900 dark:text-white">Select Date</label>
-                <div class="relative mt-1.5 rounded-lg">
-                    <input 
-                        type="date" 
-                        id="schedule-date"
-                        wire:model.live="selectedDate"
-                        class="block w-full rounded-lg border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:ring-zinc-700 dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                    >
-                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                        <svg class="h-5 w-5 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75z" clip-rule="evenodd" />
-                        </svg>
+            <!-- Date and Time Selector -->
+            <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl">
+                <div>
+                    <label for="schedule-date" class="block text-sm font-medium text-zinc-900 dark:text-white">Select Date</label>
+                    <div class="relative mt-1.5 rounded-lg">
+                        <input 
+                            type="date" 
+                            id="schedule-date"
+                            wire:model.live="selectedDate"
+                            class="block w-full rounded-lg border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:ring-zinc-700 dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label for="schedule-time" class="block text-sm font-medium text-zinc-900 dark:text-white">Select Time</label>
+                    <div class="relative mt-1.5 rounded-lg">
+                        <input 
+                            type="time" 
+                            id="schedule-time"
+                            wire:model.live="selectedTime"
+                            class="block w-full rounded-lg border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:ring-zinc-700 dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+                        >
                     </div>
                 </div>
             </div>
@@ -158,42 +167,68 @@
             <!-- Courts Grid -->
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($courts as $court)
-                    <div class="overflow-hidden rounded-lg border border-zinc-200 bg-white shadow-sm transition-all hover:shadow dark:border-zinc-700 dark:bg-zinc-800">
+                    <div class="overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
                         <div class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-zinc-900 dark:text-white">Court {{ $court->number }}</h3>
-                                <span @class([
-                                    'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
-                                    'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-500' => $court->status === 'available',
-                                    'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-500' => $court->status === 'occupied',
-                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500' => $court->status === 'maintenance',
-                                ])>
-                                    {{ ucfirst($court->status) }}
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    @if($court->status === 'maintenance')
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500">
+                                            Maintenance
+                                        </span>
+                                    @elseif($court->hasMatchOn($selectedDate) && $court->start_time && $court->end_time)
+                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium">
+                                            {{ \Carbon\Carbon::parse($court->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($court->end_time)->format('H:i') }}
+                                        </span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="divide-y divide-zinc-200 dark:divide-zinc-700">
-                            @if($court->match && $court->schedule_date)
-                                <div class="p-4">
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="text-sm font-medium text-zinc-900 dark:text-white">
-                                                {{ $court->match->player1->name }} vs {{ $court->match->player2->name }}
-                                            </p>
-                                            <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-                                                {{ Carbon\Carbon::parse($court->start_time)->format('H:i') }} - 
-                                                {{ Carbon\Carbon::parse($court->end_time)->format('H:i') }}
-                                            </p>
+                        <div class="p-4">
+                            @if($selectedDate)
+                                <div class="mb-4">
+                                    <h4 class="text-sm font-medium text-zinc-900 dark:text-white mb-2">
+                                        Schedule for {{ \Carbon\Carbon::parse($selectedDate)->format('j M Y') }}
+                                    </h4>
+                                    
+                                    @if($court->hasMatchOn($selectedDate))
+                                        <div class="rounded-md border border-zinc-200 p-3 dark:border-zinc-700">
+                                            <div class="flex items-center justify-between">
+                                                <div>
+                                                    <div class="flex items-center gap-2 mb-1">
+                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500">
+                                                            {{ $court->start_time ? $court->start_time->format('H:i') : 'Start time not set' }} - 
+                                                            {{ $court->end_time ? $court->end_time->format('H:i') : 'End time not set' }}
+                                                        </span>
+                                                    </div>
+                                                    @if($court->match)
+                                                        <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                                                            {{ $court->match->player1->name }} vs {{ $court->match->player2->name }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                                @if($court->match)
+                                                    {{-- <a href="{{ route('admin.matches.show', $court->match) }}" wire:navigate>
+                                                        <flux:button size="xs" variant="outline">View Match</flux:button>
+                                                    </a> --}}
+                                                @endif
+                                            </div>
                                         </div>
-                                        <flux:button size="xs" variant="secondary">View Match</flux:button>
+                                    @else
+                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">No matches scheduled for this date</p>
+                                    @endif
+                                </div>
+
+                                @if($selectedTime && $court->isAvailable($selectedDate, $selectedTime))
+                                    <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                                        <div class="flex items-center justify-end">
+                                            <flux:button size="xs" wire:click="scheduleMatch({{ $court->id }})">
+                                                Schedule Match
+                                            </flux:button>
+                                        </div>
                                     </div>
-                                </div>
-                            @else
-                                <div class="flex items-center justify-between p-4">
-                                    <p class="text-sm text-zinc-500 dark:text-zinc-400">No matches scheduled</p>
-                                    <flux:button size="xs">Schedule Match</flux:button>
-                                </div>
+                                @endif
                             @endif
                         </div>
                     </div>
