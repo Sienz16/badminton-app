@@ -120,6 +120,20 @@
                     <option value="unverified">Pending Verification</option>
                 </flux:select>
             @endif
+
+            <!-- Add this new button -->
+            <div class="md:col-span-2 flex justify-end">
+                <flux:modal.trigger name="create-user-modal">
+                    <flux:button variant="primary">
+                        <span class="flex items-center gap-2">
+                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                            </svg>
+                            Create New User
+                        </span>
+                    </flux:button>
+                </flux:modal.trigger>
+            </div>
         </div>
     </div>
 
@@ -289,9 +303,9 @@
             </div>
 
             <!-- Footer -->
-            <div class="mt-8 flex justify-end gap-3">
+            <div class="flex justify-end gap-3">
                 <flux:modal.close>
-                    <flux:button variant="ghost" class="px-4">
+                    <flux:button variant="subtle" class="px-4">
                         Cancel
                     </flux:button>
                 </flux:modal.close>
@@ -318,5 +332,119 @@
                 </flux:button>
             </div>
         </div>
+    </flux:modal>
+
+    <flux:modal name="create-user-modal" :show="$errors->isNotEmpty()" focusable>
+        <form wire:submit="createUser" class="space-y-6 p-6">
+            <div>
+                <flux:heading size="lg">Create New User</flux:heading>
+                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                    Fill in the details to create a new player or umpire
+                </p>
+            </div>
+
+            <!-- Basic Information -->
+            <div class="grid gap-6 md:grid-cols-2">
+                <div>
+                    <flux:label for="name">Name</flux:label>
+                    <flux:input wire:model="name" type="text" required />
+                    <flux:error field="name" />
+                </div>
+
+                <div>
+                    <flux:label for="email">Email</flux:label>
+                    <flux:input wire:model="email" type="email" required />
+                    <flux:error field="email" />
+                </div>
+
+                <div>
+                    <flux:label for="phone_number">Phone Number</flux:label>
+                    <flux:input wire:model="phone_number" type="tel" />
+                    <flux:error field="phone_number" />
+                </div>
+
+                <div>
+                    <flux:label for="role_id">Role</flux:label>
+                    <flux:select wire:model.live="role_id" required>
+                        <option value="player">Player</option>
+                        <option value="umpire">Umpire</option>
+                    </flux:select>
+                    <flux:error field="role_id" />
+                </div>
+            </div>
+
+            <!-- Profile Photo -->
+            <div>
+                <flux:label for="profile_photo">Profile Photo</flux:label>
+                <flux:input wire:model="profile_photo" type="file" accept="image/*" />
+                <flux:error field="profile_photo" />
+            </div>
+
+            <!-- Bio -->
+            <div>
+                <flux:label for="bio">Bio</flux:label>
+                <flux:textarea wire:model="bio" rows="3" />
+                <flux:error field="bio" />
+            </div>
+
+            <!-- Player Fields -->
+            @if($role_id === 'player')
+            <div class="grid gap-6 md:grid-cols-2">
+                <div>
+                    <flux:label for="date_of_birth">Date of Birth</flux:label>
+                    <flux:input wire:model="date_of_birth" type="date" required />
+                    <flux:error field="date_of_birth" />
+                </div>
+
+                <div>
+                    <flux:label for="gender">Gender</flux:label>
+                    <flux:select wire:model="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </flux:select>
+                    <flux:error field="gender" />
+                </div>
+
+                <div>
+                    <flux:label for="nationality">Nationality</flux:label>
+                    <flux:input wire:model="nationality" type="text" required />
+                    <flux:error field="nationality" />
+                </div>
+
+                <div>
+                    <flux:label for="playing_hand">Playing Hand</flux:label>
+                    <flux:select wire:model="playing_hand" required>
+                        <option value="right">Right</option>
+                        <option value="left">Left</option>
+                        <option value="ambidextrous">Ambidextrous</option>
+                    </flux:select>
+                    <flux:error field="playing_hand" />
+                </div>
+            </div>
+            @endif
+
+            <!-- Umpire Fields -->
+            @if($role_id === 'umpire')
+            <div>
+                <flux:label for="status">Status</flux:label>
+                <flux:select wire:model="status" required>
+                    <option value="available">Available</option>
+                    <option value="unavailable">Unavailable</option>
+                </flux:select>
+                <flux:error field="status" />
+            </div>
+            @endif
+
+            <div class="flex justify-end gap-3">
+                <flux:button type="button" variant="ghost" x-on:click="$dispatch('close')">
+                    Cancel
+                </flux:button>
+                <flux:button type="submit">
+                    Create User
+                </flux:button>
+            </div>
+        </form>
     </flux:modal>
 </div>

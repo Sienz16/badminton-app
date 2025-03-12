@@ -56,9 +56,6 @@ class Index extends Component
 
         $allCourts = Court::where('venue_id', $this->venueId)
             ->orderBy('number')
-
-        $matches = GameMatch::with(['player1', 'player2', 'venue'])
-            ->orderBy('scheduled_at', 'asc')
             ->get();
 
         $this->availableCourts = [];
@@ -92,7 +89,7 @@ class Index extends Component
             'umpireId' => 'required|exists:users,id|different:player1Id|different:player2Id',
         ]);
 
-        // Check if court is available for the requested date and time
+        // Check if court is available
         $court = Court::where('venue_id', $this->venueId)
             ->where('number', $this->courtNumber)
             ->first();
@@ -117,7 +114,7 @@ class Index extends Component
                 'match_id' => $match->id,
                 'schedule_date' => $this->date,
                 'start_time' => $this->startTime,
-                'end_time' => $this->endTime
+                'end_time' => null  // Set end_time to null since we're not using it
             ]);
         });
 
@@ -138,3 +135,4 @@ class Index extends Component
         ]);
     }
 }
+

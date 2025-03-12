@@ -77,9 +77,25 @@ class Court extends Model
         return !$this->isOccupied($checkDate, $checkTime);
     }
 
+    public function matches()
+    {
+        return $this->hasMany(GameMatch::class, 'court_number', 'number')
+                    ->where('venue_id', $this->venue_id);
+    }
+
+    public function getMatchesForDate($date)
+    {
+        return $this->matches()
+            ->whereDate('scheduled_at', $date)
+            ->orderBy('scheduled_at')
+            ->get();
+    }
+
     public function hasMatchOn($date): bool
     {
-        return $this->schedule_date?->toDateString() === $date;
+        return $this->matches()
+            ->whereDate('scheduled_at', $date)
+            ->exists();
     }
 
     public function hasScheduleConflict($date, $startTime, $endTime): bool

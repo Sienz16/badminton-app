@@ -37,10 +37,21 @@
                             </thead>
                             <tbody class="divide-y divide-zinc-200 bg-white dark:divide-zinc-700 dark:bg-zinc-900">
                                 @foreach($matches as $match)
+                                
+                                {{-- @php dd([
+                                    'match' => $match->toArray(),
+                                    'players' => $match->player1?->toArray(),
+                                    'player1_user' => $match->player1?->user?->toArray(),
+                                ]);
+                                @endphp  --}}
                                     <tr>
                                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                             <div class="font-medium text-zinc-900 dark:text-white">
-                                                {{ $match->player1->name }} vs {{ $match->player2->name }}
+                                                @if($match->player1 && $match->player2)
+                                                    {{ $match->player1->name }} vs {{ $match->player2->name }}
+                                                @else
+                                                    <span class="text-red-500">Invalid match data</span>
+                                                @endif
                                             </div>
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
