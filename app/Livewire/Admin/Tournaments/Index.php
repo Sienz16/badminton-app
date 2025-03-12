@@ -10,7 +10,7 @@ class Index extends Component
     public function render()
     {
         $matches = GameMatch::with(['player1', 'player2', 'venue'])
-            ->orderBy('scheduled_at', 'desc')
+            ->orderBy('scheduled_at', 'asc')
             ->get();
 
         return view('livewire.admin.tournaments.index', [
