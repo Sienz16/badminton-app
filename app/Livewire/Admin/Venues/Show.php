@@ -19,6 +19,7 @@ class Show extends Component
 
     public Venue $venue;
     public $selectedDate;
+    public $selectedTime;
     
     // Edit form properties
     public $name;
@@ -33,7 +34,8 @@ class Show extends Component
     public function mount(Venue $venue)
     {
         $this->venue = $venue;
-        $this->selectedDate = now()->format('Y-m-d');
+        $this->selectedDate = now()->toDateString();
+        $this->selectedTime = now()->format('H:i');
         
         // Initialize form fields
         $this->resetForm();
@@ -202,12 +204,8 @@ class Show extends Component
 
     public function render()
     {
-        $courts = $this->venue->courts()
-            ->orderBy('number')
-            ->get();
-
         return view('livewire.admin.venues.show', [
-            'courts' => $courts
+            'courts' => $this->venue->courts()->with(['match.player1', 'match.player2'])->get()
         ]);
     }
 }

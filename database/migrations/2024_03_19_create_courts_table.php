@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('venue_id')->constrained()->onDelete('cascade');
             $table->foreignId('match_id')->nullable()->constrained('matches')->onDelete('cascade');
             $table->integer('number');
-            $table->enum('status', ['available', 'occupied', 'maintenance'])->default('available');
+            $table->enum('status', ['available', 'maintenance'])->default('available');
             $table->date('schedule_date')->nullable();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
