@@ -25,6 +25,7 @@ class VerifyEmailController extends Controller
         return $this->redirectToDashboard($request->user(), '?verified=1');
     }
 
+    // Redirect to dashboard
     private function redirectToDashboard($user, $query = ''): RedirectResponse
     {
         $dashboardRoute = match ($user->role) {

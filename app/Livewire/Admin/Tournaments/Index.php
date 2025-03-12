@@ -56,6 +56,9 @@ class Index extends Component
 
         $allCourts = Court::where('venue_id', $this->venueId)
             ->orderBy('number')
+
+        $matches = GameMatch::with(['player1', 'player2', 'venue'])
+            ->orderBy('scheduled_at', 'asc')
             ->get();
 
         $this->availableCourts = [];
@@ -135,4 +138,3 @@ class Index extends Component
         ]);
     }
 }
-
