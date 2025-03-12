@@ -51,7 +51,7 @@ Route::middleware(['auth', CheckRole::class.':admin'])->prefix('admin')->name('a
     Route::get('/venues', Venues::class)->name('venues');
     Route::get('/venues/{venue}', VenueShow::class)->name('venues.show');
     Route::get('/tournaments', TournamentIndex::class)->name('tournaments');
-    Route::get('/tournaments/{tournament}', TournamentShow::class)->name('tournaments.show');
+    Route::get('/tournaments/{match}', App\Livewire\Admin\Tournaments\Show::class)->name('tournaments.show');
 });
 
 // Umpire Routes

@@ -192,29 +192,31 @@
                                         Schedule for {{ \Carbon\Carbon::parse($selectedDate)->format('j M Y') }}
                                     </h4>
                                     
-                                    @if($court->hasMatchOn($selectedDate))
-                                        <div class="rounded-md border border-zinc-200 p-3 dark:border-zinc-700">
-                                            <div class="flex items-center justify-between">
-                                                <div>
-                                                    <div class="flex items-center gap-2 mb-1">
-                                                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500">
-                                                            {{ $court->start_time ? $court->start_time->format('H:i') : 'Start time not set' }} - 
-                                                            {{ $court->end_time ? $court->end_time->format('H:i') : 'End time not set' }}
-                                                        </span>
-                                                    </div>
-                                                    @if($court->match)
+                                    @php
+                                        $matchesForDate = $court->getMatchesForDate($selectedDate);
+                                    @endphp
+                                    
+                                    @if($matchesForDate->isNotEmpty())
+                                        @foreach($matchesForDate as $match)
+                                            <div class="rounded-md border border-zinc-200 p-3 dark:border-zinc-700 mb-2">
+                                                <div class="flex items-center justify-between">
+                                                    <div>
+                                                        <div class="flex items-center gap-2 mb-1">
+                                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500">
+                                                                {{ $match->scheduled_at->format('H:i') }} - 
+                                                                {{ $match->scheduled_at->addHours(1)->format('H:i') }}
+                                                            </span>
+                                                        </div>
                                                         <p class="text-sm text-zinc-600 dark:text-zinc-400">
-                                                            {{ $court->match->player1->name }} vs {{ $court->match->player2->name }}
+                                                            {{ $match->player1->name }} vs {{ $match->player2->name }}
                                                         </p>
-                                                    @endif
-                                                </div>
-                                                @if($court->match)
-                                                    {{-- <a href="{{ route('admin.matches.show', $court->match) }}" wire:navigate>
+                                                    </div>
+                                                    {{-- <a href="{{ route('admin.matches.show', $match) }}" wire:navigate>
                                                         <flux:button size="xs" variant="outline">View Match</flux:button>
                                                     </a> --}}
-                                                @endif
+                                                </div>
                                             </div>
-                                        </div>
+                                        @endforeach
                                     @else
                                         <p class="text-sm text-zinc-500 dark:text-zinc-400">No matches scheduled for this date</p>
                                     @endif

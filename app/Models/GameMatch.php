@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
 use Carbon\Carbon;
 
 class GameMatch extends Model
@@ -34,19 +36,31 @@ class GameMatch extends Model
             ->orderBy('played_at', 'desc');
     }
 
+    // Add this scope to fetch matches for a specific player
+    public function scopeForPlayer(Builder $query, $userId): void
+    {
+        $query->where('player1_id', $userId)
+              ->orWhere('player2_id', $userId);
+    }
+
     // Add winner relationship
     public function winner()
     {
         return $this->belongsTo(User::class, 'winner_id');
     }
 
-    // Existing relationships
-    public function player1()
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    // Modify these relationships to use Player model instead of User
+    public function player1(): BelongsTo
     {
         return $this->belongsTo(User::class, 'player1_id');
     }
-
-    public function player2()
+    
+    public function player2(): BelongsTo
     {
         return $this->belongsTo(User::class, 'player2_id');
     }
@@ -59,6 +73,11 @@ class GameMatch extends Model
     public function umpire()
     {
         return $this->belongsTo(User::class, 'umpire_id');
+    }
+
+    public function court()
+    {
+        return $this->belongsTo(Court::class);
     }
 
     // Status checker methods
