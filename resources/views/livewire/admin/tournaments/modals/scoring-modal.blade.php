@@ -3,21 +3,31 @@
 x-data="{ 
     showScoringModal: @entangle('showScoringModal'),
     matchTimer: null,
-    elapsedTime: '00:00',
+    elapsedTime: '00:00:00',
     startTimer() {
+        if ('{{ $match->status }}' === 'completed') {
+            return;
+        }
+        
         const startTime = new Date('{{ $match->played_at ?? now() }}');
         this.matchTimer = setInterval(() => {
             const now = new Date();
             const diff = Math.floor((now - startTime) / 1000);
-            const minutes = Math.floor(diff / 60).toString().padStart(2, '0');
+            const hours = Math.floor(diff / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
             const seconds = (diff % 60).toString().padStart(2, '0');
-            this.elapsedTime = `${minutes}:${seconds}`;
+            this.elapsedTime = `${hours}:${minutes}:${seconds}`;
+            
+            // Stop timer if match is completed
+            if ('{{ $match->status }}' === 'completed') {
+                clearInterval(this.matchTimer);
+            }
         }, 1000);
     }
 }"
 x-init="
     $watch('showScoringModal', value => {
-        if(value) {
+        if(value && '{{ $match->status }}' !== 'completed') {
             document.body.classList.add('overflow-hidden');
             startTimer();
         } else {
@@ -50,7 +60,7 @@ x-init="
                 <div class="flex items-center justify-between border-b border-gray-200 p-6 dark:border-gray-700">
                     <div>
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Live Scoring</h2>
-                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">Match #{{ $match->id }}</p>
+                        <p class="mt-1 text-l text-gray-600 dark:text-gray-400">Match Information</p>
                     </div>
                     
                     <div class="text-right">

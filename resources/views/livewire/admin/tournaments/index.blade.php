@@ -94,7 +94,7 @@
     </div>
 
     <!-- Create Match Modal -->
-    <flux:modal name="create-match-modal" :show="$errors->isNotEmpty()" focusable class="max-w-7xl"> <!-- Increased to max-w-7xl -->
+    <flux:modal name="create-match-modal" :show="$errors->isNotEmpty()" focusable class="max-w-4xl"> <!-- Increased to max-w-7xl -->
         <form wire:submit="createMatch" class="space-y-8">
             <div class="p-8"> <!-- Increased padding from p-6 to p-8 -->
                 <!-- Header -->
@@ -177,7 +177,7 @@
                             <div class="mt-2">
                                 <flux:select 
                                     wire:model.live="venueId"
-                                    class="w-full"
+                                    class="w-full min-w-[290px]"
                                 >
                                     <option value="">Select Venue</option>
                                     @foreach($venues as $venue)
@@ -193,12 +193,16 @@
                             <div class="mt-2">
                                 <flux:select 
                                     wire:model.live="courtNumber"
-                                    class="w-full"
+                                    class="w-full min-w-[290px]"
                                 >
                                     <option value="">Select Court</option>
-                                    @foreach($availableCourts as $court)
-                                        <option value="{{ $court }}">Court {{ $court }}</option>
-                                    @endforeach
+                                    @if(count($availableCourts) > 0)
+                                        @foreach($availableCourts as $court)
+                                            <option value="{{ $court }}">Court {{ $court }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>No courts available for selected time</option>
+                                    @endif
                                 </flux:select>
                             </div>
                             @error('courtNumber') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror

@@ -8,6 +8,7 @@ use App\Models\Court;
 use App\Models\GameMatch;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class Index extends Component
 {
@@ -31,47 +32,64 @@ class Index extends Component
         $this->umpires = User::where('role_id', 'umpire')->get();
     }
 
-    public function updatedVenueId()
+    public function updatedVenueId($value)
     {
-        $this->updateAvailableCourts();
+        if ($value) {
+            $this->updateAvailableCourts();
+        } else {
+            $this->availableCourts = [];
+        }
     }
 
-    public function updatedDate()
+    public function updatedDate($value)
     {
-        $this->updateAvailableCourts();
+        if ($value) {
+            $this->updateAvailableCourts();
+        }
     }
 
-    public function updatedStartTime()
+    public function updatedStartTime($value)
     {
-        $this->updateAvailableCourts();
+        if ($value) {
+            $this->updateAvailableCourts();
+        }
     }
 
-    protected function updateAvailableCourts()
+    private function updateAvailableCourts()
     {
-        $this->reset('courtNumber', 'availableCourts');
-
-        if (!$this->venueId) {
+        $this->availableCourts = [];
+        
+        if (!$this->venueId || !$this->date || !$this->startTime) {
             return;
         }
 
-        $allCourts = Court::where('venue_id', $this->venueId)
-            ->orderBy('number')
-            ->get();
+        // Get all courts for the selected venue
+        $courts = Court::where('venue_id', $this->venueId)->get();
+        
+        $startDateTime = Carbon::parse($this->date . ' ' . $this->startTime);
+        $endDateTime = $startDateTime->copy()->addHour();
 
-        $this->availableCourts = [];
+        // Get booked courts for the selected date/time range
+        $bookedCourts = GameMatch::where('venue_id', $this->venueId)
+            ->where(function($query) use ($startDateTime, $endDateTime) {
+                $query->where(function($q) use ($startDateTime, $endDateTime) {
+                    $q->whereIn('status', ['scheduled', 'in_progress'])
+                      ->where(function($q) use ($startDateTime, $endDateTime) {
+                          // Check if the new match time overlaps with existing matches
+                          $q->where(function($q) use ($startDateTime, $endDateTime) {
+                              $q->where('scheduled_at', '<', $endDateTime)
+                                ->where(DB::raw('DATE_ADD(scheduled_at, INTERVAL 1 HOUR)'), '>', $startDateTime);
+                          });
+                      });
+                });
+            })
+            ->pluck('court_number')
+            ->toArray();
 
-        foreach ($allCourts as $court) {
-            if ($this->date && $this->startTime) {
-                $hasConflict = Court::where('venue_id', $this->venueId)
-                    ->where('number', $court->number)
-                    ->where('schedule_date', $this->date)
-                    ->where('start_time', $this->startTime)
-                    ->exists();
-
-                if (!$hasConflict) {
-                    $this->availableCourts[] = $court->number;
-                }
-            } else {
+        // Filter available courts
+        foreach ($courts as $court) {
+            if (!in_array($court->number, $bookedCourts) && 
+                $court->status !== 'maintenance') {
                 $this->availableCourts[] = $court->number;
             }
         }
@@ -89,23 +107,43 @@ class Index extends Component
             'umpireId' => 'required|exists:users,id|different:player1Id|different:player2Id',
         ]);
 
+        $startDateTime = $this->date . ' ' . $this->startTime;
+        $endDateTime = date('Y-m-d H:i:s', strtotime($startDateTime . ' +1 hour'));
+
         // Check if court is available
         $court = Court::where('venue_id', $this->venueId)
             ->where('number', $this->courtNumber)
             ->first();
 
-        if (!$court->isAvailable($this->date)) {
-            $this->addError('courtNumber', 'This court is not available for the selected date and time.');
+        if (!$court || $court->status === 'maintenance') {
+            $this->addError('courtNumber', 'This court is not available.');
             return;
         }
 
-        DB::transaction(function () use ($court) {
+        // Check for any overlapping matches that are scheduled or in progress
+        $existingMatch = GameMatch::where('venue_id', $this->venueId)
+            ->where('court_number', $this->courtNumber)
+            ->whereIn('status', ['scheduled', 'in_progress'])
+            ->where(function($query) use ($startDateTime, $endDateTime) {
+                $query->where(function($q) use ($startDateTime, $endDateTime) {
+                    $q->where('scheduled_at', '>=', $startDateTime)
+                      ->where('scheduled_at', '<', $endDateTime);
+                });
+            })
+            ->exists();
+
+        if ($existingMatch) {
+            $this->addError('courtNumber', 'This court has an overlapping match scheduled.');
+            return;
+        }
+
+        DB::transaction(function () use ($court, $startDateTime) {
             $match = new GameMatch();
             $match->player1_id = $this->player1Id;
             $match->player2_id = $this->player2Id;
             $match->venue_id = $this->venueId;
             $match->court_number = $this->courtNumber;
-            $match->scheduled_at = $this->date . ' ' . $this->startTime;
+            $match->scheduled_at = $startDateTime;
             $match->umpire_id = $this->umpireId;
             $match->status = 'scheduled';
             $match->save();
@@ -114,13 +152,28 @@ class Index extends Component
                 'match_id' => $match->id,
                 'schedule_date' => $this->date,
                 'start_time' => $this->startTime,
-                'end_time' => null  // Set end_time to null since we're not using it
+                'end_time' => date('H:i:s', strtotime($startDateTime . ' +1 hour'))
             ]);
         });
 
         $this->dispatch('match-created');
         $this->js("document.querySelector('[data-modal=\"create-match-modal\"]').close()");
-        $this->reset();
+        
+        // Reset only the form fields, not the loaded data
+        $this->resetForm();
+    }
+
+    // Add new method to reset only form fields
+    private function resetForm()
+    {
+        $this->player1Id = '';
+        $this->player2Id = '';
+        $this->venueId = '';
+        $this->courtNumber = '';
+        $this->date = '';
+        $this->startTime = '';
+        $this->umpireId = '';
+        $this->availableCourts = [];
     }
 
     public function render()
