@@ -107,7 +107,9 @@ class Users extends Component
             });
 
             $this->resetForm();
-            $this->dispatch('user-created');
+            session()->flash('success', 'User created successfully.');
+            
+            // Use the same JS dispatch pattern as seen in your venues component
             $this->js("document.querySelector('[data-modal=\"create-user-modal\"]').close()");
 
         } catch (\Exception $e) {
@@ -115,14 +117,16 @@ class Users extends Component
         }
     }
 
-    public function resetForm()
+    private function resetForm()
     {
         $this->reset([
             'name', 'email', 'phone_number', 'role_id', 'bio', 'profile_photo',
             'date_of_birth', 'gender', 'nationality', 'playing_hand',
             'status', 'password'
         ]);
+        
         $this->resetValidation();
+        $this->role_id = 'player';
     }
 
     public function verifyUser()

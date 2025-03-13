@@ -285,6 +285,17 @@ class Show extends Component
             // Begin transaction
             DB::beginTransaction();
 
+            // If match was completed, decrement matches_played for both players
+            if ($this->match->status === 'completed') {
+                Player::where('user_id', $this->match->player1_id)->decrement('matches_played');
+                Player::where('user_id', $this->match->player2_id)->decrement('matches_played');
+
+                // If there was a winner, decrement their matches_won
+                if ($this->match->final_winner_id) {
+                    Player::where('user_id', $this->match->final_winner_id)->decrement('matches_won');
+                }
+            }
+
             // If there's a court associated, clear its match-related fields
             if ($this->match->court) {
                 $this->match->court->update([
