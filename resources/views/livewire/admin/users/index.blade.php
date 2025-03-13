@@ -357,6 +357,19 @@
                     <flux:error field="email" />
                 </div>
 
+                <!-- Add this new password field -->
+                <div>
+                    <flux:label for="password">Temporary Password</flux:label>
+                    <flux:input 
+                        wire:model="password" 
+                        type="password" 
+                        required 
+                        autocomplete="new-password"
+                    />
+                    <p class="mt-1 text-sm text-gray-500">Set a temporary password for the user</p>
+                    <flux:error field="password" />
+                </div>
+
                 <div>
                     <flux:label for="phone_number">Phone Number</flux:label>
                     <flux:input wire:model="phone_number" type="tel" />

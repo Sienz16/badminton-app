@@ -17,6 +17,13 @@ class Show extends Component
     public int $player2Score = 0;
     public bool $showWinnerModal = false;
     public ?string $winnerId = null;
+    
+    // Add these properties for scoring modal
+    public bool $showScoringModal = false;
+    public bool $isMatchLive = false;
+    public string $elapsedTime = '00:00';
+    public array $scoreHistory = [];
+    public ?string $lastPointTime = null;
 
     public function mount(GameMatch $match)
     {
@@ -24,46 +31,76 @@ class Show extends Component
         if ($this->match->score) {
             [$this->player1Score, $this->player2Score] = explode('-', $this->match->score);
         }
+        $this->scoreHistory = $this->match->scoreHistory()->orderBy('created_at', 'desc')->get()->toArray();
     }
 
     public function startMatch()
     {
-        if ($this->match->isScheduled() && Auth::user()->id === $this->match->umpire_id) {
-            $this->match->status = 'in_progress';
-            $this->match->save();
-        }
+        $this->isMatchLive = true;
+        $this->match->status = 'live';
+        $this->match->save();
     }
 
-    public function incrementScore($player)
+    public function pauseMatch()
     {
-        if (!$this->match->isLive()) {
+        $this->isMatchLive = false;
+        $this->match->status = 'paused';
+        $this->match->save();
+    }
+
+    public function incrementScore(int $playerNumber)
+    {
+        if (!$this->isMatchLive) {
             return;
         }
 
-        if ($player === 1 && $this->player1Score < 30) {
+        if ($playerNumber === 1) {
             $this->player1Score++;
-        } elseif ($player === 2 && $this->player2Score < 30) {
+        } else {
             $this->player2Score++;
         }
 
-        $this->match->score = "{$this->player1Score}-{$this->player2Score}";
-        $this->match->save();
+        $this->saveScore();
     }
 
-    public function decrementScore($player)
+    public function decrementScore(int $playerNumber)
     {
-        if (!$this->match->isLive()) {
+        if (!$this->isMatchLive) {
             return;
         }
 
-        if ($player === 1 && $this->player1Score > 0) {
+        if ($playerNumber === 1 && $this->player1Score > 0) {
             $this->player1Score--;
-        } elseif ($player === 2 && $this->player2Score > 0) {
+        } elseif ($playerNumber === 2 && $this->player2Score > 0) {
             $this->player2Score--;
         }
 
+        $this->saveScore();
+    }
+
+    public function undoLastPoint()
+    {
+        $lastScore = $this->match->scoreHistory()->latest()->first();
+        if ($lastScore) {
+            $this->player1Score = $lastScore->player1_score;
+            $this->player2Score = $lastScore->player2_score;
+            $lastScore->delete();
+            $this->scoreHistory = $this->match->scoreHistory()->orderBy('created_at', 'desc')->get()->toArray();
+        }
+    }
+
+    private function saveScore()
+    {
         $this->match->score = "{$this->player1Score}-{$this->player2Score}";
         $this->match->save();
+
+        $this->match->scoreHistory()->create([
+            'player1_score' => $this->player1Score,
+            'player2_score' => $this->player2Score,
+        ]);
+
+        $this->lastPointTime = now()->format('H:i:s');
+        $this->scoreHistory = $this->match->scoreHistory()->orderBy('created_at', 'desc')->get()->toArray();
     }
 
     public function declareWinner($playerId)

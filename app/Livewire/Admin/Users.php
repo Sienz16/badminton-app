@@ -29,6 +29,7 @@ class Users extends Component
     public $role_id = 'player';
     public $bio = '';
     public $profile_photo;
+    public $password = '';
 
     // Player specific fields
     public $date_of_birth = '';
@@ -46,6 +47,7 @@ class Users extends Component
         'role_id' => 'required|in:player,umpire',
         'bio' => 'nullable|string',
         'profile_photo' => 'nullable|image|max:1024', // max 1MB
+        'password' => 'required|min:8',
         
         // Player validation rules
         'date_of_birth' => 'required_if:role_id,player|date',
@@ -67,7 +69,7 @@ class Users extends Component
                 $user = User::create([
                     'name' => $this->name,
                     'email' => $this->email,
-                    'password' => Hash::make('password123'), // Default password
+                    'password' => Hash::make($this->password),
                     'role_id' => $this->role_id,
                     'email_verified_at' => now(),
                     'admin_verified_at' => now(),
@@ -104,7 +106,7 @@ class Users extends Component
                 }
             });
 
-            $this->reset();
+            $this->resetForm();
             $this->dispatch('user-created');
             $this->js("document.querySelector('[data-modal=\"create-user-modal\"]').close()");
 
@@ -118,7 +120,7 @@ class Users extends Component
         $this->reset([
             'name', 'email', 'phone_number', 'role_id', 'bio', 'profile_photo',
             'date_of_birth', 'gender', 'nationality', 'playing_hand',
-            'status'
+            'status', 'password'
         ]);
         $this->resetValidation();
     }
