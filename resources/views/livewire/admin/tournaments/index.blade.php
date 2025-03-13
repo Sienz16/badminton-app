@@ -28,6 +28,7 @@
                                 <tr>
                                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-zinc-900 dark:text-white sm:pl-6">Match</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Venue</th>
+                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Court</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Date</th>
                                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Status</th>
                                     <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -44,7 +45,7 @@
                                     'player1_user' => $match->player1?->user?->toArray(),
                                 ]);
                                 @endphp  --}}
-                                    <tr>
+                                    <tr wire:key="{{ $match->id }}">
                                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                                             <div class="font-medium text-zinc-900 dark:text-white">
                                                 @if($match->player1 && $match->player2)
@@ -56,6 +57,13 @@
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
                                             {{ $match->venue->name }}
+                                        </td>
+                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
+                                            @if($match->court_number)
+                                                Court {{ $match->court_number }}
+                                            @else
+                                                <span class="text-zinc-400 dark:text-zinc-500">Not assigned</span>
+                                            @endif
                                         </td>
                                         <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
                                             {{ $match->scheduled_at->format('M d, Y H:i') }}

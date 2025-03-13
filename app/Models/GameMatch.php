@@ -13,6 +13,7 @@ class GameMatch extends Model
     protected $table = 'matches';
 
     protected $casts = [
+        'completed_at' => 'datetime',
         'scheduled_at' => 'datetime',
         'played_at' => 'datetime',
     ];
@@ -70,17 +71,39 @@ class GameMatch extends Model
         return $this->belongsTo(Venue::class);
     }
 
-    public function umpire()
+    /**
+     * Get the umpire user record.
+     */
+    public function umpireUser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'umpire_id');
     }
 
-    public function court()
+    /**
+     * Get the umpire profile.
+     */
+    public function umpire(): BelongsTo
     {
-        return $this->belongsTo(Court::class);
+        return $this->belongsTo(Umpire::class, 'umpire_id', 'user_id');
+    }
+
+    public function court(): BelongsTo
+    {
+        return $this->belongsTo(Court::class, 'court_number', 'number')
+                    ->where('courts.venue_id', $this->venue_id);
     }
 
     // Status checker methods
+    public function isScheduled()
+    {
+        return $this->status === 'scheduled';
+    }
+
+    public function hasStarted(): bool
+    {
+        return $this->status === 'in_progress' || $this->status === 'completed';
+    }
+
     public function isLive(): bool
     {
         return $this->status === 'in_progress';
@@ -89,11 +112,6 @@ class GameMatch extends Model
     public function isCompleted(): bool
     {
         return $this->status === 'completed';
-    }
-
-    public function isScheduled(): bool
-    {
-        return $this->status === 'scheduled';
     }
 
     public function isCancelled(): bool
