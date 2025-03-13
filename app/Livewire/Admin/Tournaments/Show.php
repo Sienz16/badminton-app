@@ -266,10 +266,17 @@ class Show extends Component
         $this->match->status = 'completed';
         $this->match->final_winner_id = $player->id;
         $this->match->completed_at = now();
+        
+        // Update matches_played for both players only when match completes
+        Player::where('user_id', $this->match->player1_id)->increment('matches_played');
+        Player::where('user_id', $this->match->player2_id)->increment('matches_played');
+        
+        // Update winner's matches_won
+        Player::where('user_id', $player->id)->increment('matches_won');
+        
         $this->match->save();
 
         session()->flash('success', 'Match completed successfully.');
-        // Remove the redirect, letting users stay on the current page
     }
 
     public function deleteMatch()

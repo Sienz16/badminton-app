@@ -312,11 +312,6 @@
                                     Not assigned
                                 @endif
                             </p>
-                            <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-300">
-                                @if($match->court)
-                                    {{ $match->court->surface_type ?? 'Surface type not specified' }}
-                                @endif
-                            </p>
                         </div>
                     </div>
                 </div>

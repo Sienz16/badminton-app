@@ -34,47 +34,39 @@ class Court extends Model
         return $this->belongsTo(GameMatch::class, 'match_id');
     }
 
-    public function isOccupied($checkDate = null, $checkTime = null): bool
+    public function isOccupied($date, $time = null)
     {
-        // If no specific date is provided, use today
-        $checkDate = $checkDate ?? now()->toDateString();
-
-        // If court is in maintenance, it's not available
         if ($this->status === 'maintenance') {
             return true;
         }
 
-        // If no date/time provided, consider current date/time
-        $checkDate = $checkDate ?? now()->toDateString();
-        $checkTime = $checkTime ?? now()->format('H:i:s');
+        if ($this->match_id && $this->schedule_date) {
+            $scheduleDate = Carbon::parse($this->schedule_date)->toDateString();
+            $checkDate = Carbon::parse($date)->toDateString();
 
-        // If no schedule, it's not occupied
-        if (!$this->schedule_date || !$this->start_time || !$this->end_time) {
-            return false;
+            if ($scheduleDate === $checkDate) {
+                if ($time) {
+                    // If time is provided, check if it falls within the match time
+                    $matchStart = Carbon::parse($this->start_time);
+                    $matchEnd = Carbon::parse($this->end_time);
+                    $checkTime = Carbon::parse($time);
+                    
+                    return $checkTime->between($matchStart, $matchEnd);
+                }
+                return true;
+            }
         }
 
-        // Check if the date matches
-        if ($this->schedule_date->toDateString() !== $checkDate) {
-            return false;
-        }
-
-        // If no specific time to check, just return true since it's booked for this date
-        if ($checkTime === null) {
-            return true;
-        }
-
-        // Convert times to Carbon for comparison
-        $checkDateTime = Carbon::parse($checkDate . ' ' . $checkTime);
-        $startDateTime = Carbon::parse($checkDate . ' ' . $this->start_time);
-        $endDateTime = Carbon::parse($checkDate . ' ' . $this->end_time);
-
-        // Check if the time falls within the scheduled period
-        return $checkDateTime->between($startDateTime, $endDateTime);
+        return false;
     }
 
-    public function isAvailable($checkDate = null, $checkTime = null): bool
+    public function isAvailable($date, $time = null)
     {
-        return !$this->isOccupied($checkDate, $checkTime);
+        if ($this->status === 'maintenance') {
+            return false;
+        }
+
+        return !$this->isOccupied($date, $time);
     }
 
     public function matches()
@@ -91,11 +83,16 @@ class Court extends Model
             ->get();
     }
 
-    public function hasMatchOn($date): bool
+    public function hasMatchOn($date)
     {
-        return $this->matches()
-            ->whereDate('scheduled_at', $date)
-            ->exists();
+        if ($this->schedule_date) {
+            $scheduleDate = Carbon::parse($this->schedule_date)->toDateString();
+            $checkDate = Carbon::parse($date)->toDateString();
+            
+            return $scheduleDate === $checkDate;
+        }
+        
+        return false;
     }
 
     public function hasScheduleConflict($date, $startTime, $endTime): bool
