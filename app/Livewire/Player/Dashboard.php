@@ -14,12 +14,20 @@ class Dashboard extends Component
 {
     public function render()
     {
-        $player = Auth::user();
-
         return view('livewire.player.dashboard', [
-            'upcomingMatches' => GameMatch::upcoming()->forPlayer($player->id)->get(),
-            'liveMatches' => GameMatch::live()->forPlayer($player->id)->get(),
-            'pastMatches' => GameMatch::completed()->forPlayer($player->id)->latest('played_at')->limit(6)->get(),
+            'upcomingMatches' => GameMatch::upcoming()
+                ->with(['player1', 'player2', 'venue', 'umpireUser'])
+                ->get(),
+                
+            'liveMatches' => GameMatch::live()
+                ->with(['player1', 'player2', 'venue', 'umpireUser'])
+                ->get(),
+                
+            'pastMatches' => GameMatch::completed()
+                ->with(['player1', 'player2', 'venue', 'umpireUser'])
+                ->latest('played_at')
+                ->limit(6)
+                ->get(),
         ]);
     }
 }

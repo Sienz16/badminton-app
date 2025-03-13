@@ -334,7 +334,12 @@
         </div>
     </flux:modal>
 
-    <flux:modal name="create-user-modal" :show="$errors->isNotEmpty()" focusable>
+    <flux:modal 
+        name="create-user-modal" 
+        :show="$errors->isNotEmpty()"
+        x-on:close-modal.window="if ($event.detail.modal === 'create-user-modal') $dispatch('close')"
+        focusable
+    >
         <form wire:submit="createUser" class="space-y-6 p-6">
             <div>
                 <flux:heading size="lg">Create New User</flux:heading>
