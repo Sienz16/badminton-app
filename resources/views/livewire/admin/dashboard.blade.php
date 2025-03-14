@@ -82,35 +82,207 @@
             </div>
         </div>
 
-        <!-- Upcoming Matches -->
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-900">
-            <div class="flex items-center justify-between">
-                <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Upcoming Matches</h2>
-                <a href="#" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">View all</a>
-            </div>
-            <div class="mt-6 space-y-4">
-                @foreach($upcomingMatches as $match)
-                    <div class="flex items-center justify-between gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-700 dark:bg-neutral-800">
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center justify-between gap-4">
-                                <p class="truncate text-sm font-medium text-neutral-900 dark:text-white">
-                                    {{ $match->player1->name }} vs {{ $match->player2->name }}
-                                </p>
-                                <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                    <p class="text-sm text-neutral-900 dark:text-white">{{ $match->venue->name }}</p>
+        <!-- Matches Grid -->
+        <div class="grid gap-6 lg:grid-cols-3">
+            <!-- Upcoming Matches -->
+            <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-900">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Upcoming Matches</h2>
+                    <a href="{{ route('admin.tournaments') }}" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" wire:navigate>
+                        View all
+                    </a>
+                </div>
+                <div class="mt-6 space-y-4">
+                    @forelse($upcomingMatches as $match)
+                        <div class="group rounded-lg border border-neutral-200 bg-neutral-50 p-4 transition hover:border-blue-500/50 dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:border-blue-500/50">
+                            <!-- Header: Date -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <div>{{ $match->scheduled_at->format('M d, Y') }}</div>
+                                    <div>{{ $match->scheduled_at->format('H:i') }}</div>
                                 </div>
                             </div>
-                            <div class="mt-2 flex items-center justify-between gap-4">
-                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
+
+                            <!-- Players -->
+                            <div class="text-center mb-4">
+                                <div class="font-medium text-lg text-neutral-900 dark:text-white">
+                                    {{ $match->player1?->name ?? 'Player 1' }}
+                                    <span class="text-neutral-400 dark:text-neutral-500 mx-2">vs</span>
+                                    {{ $match->player2?->name ?? 'Player 2' }}
+                                </div>
+                            </div>
+
+                            <!-- Footer Info -->
+                            <div class="flex items-center justify-between text-sm text-neutral-600 dark:text-neutral-400">
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="map-pin" class="size-4" />
+                                    {{ $match->venue?->name }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="layout-grid" class="size-4" />
                                     Court {{ $match->court_number }}
-                                </p>
-                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
-                                    {{ $match->scheduled_at->format('d M Y, H:i') }}
-                                </p>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="user" class="size-4" />
+                                    {{ $match->umpireUser?->name ?? 'No umpire' }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforeach
+                    @empty
+                        <div class="rounded-lg border-2 border-dashed border-neutral-200 p-6 text-center dark:border-neutral-700">
+                            <div class="mx-auto h-12 w-12 text-neutral-400 dark:text-neutral-600">
+                                <flux:icon name="calendar" class="h-12 w-12" />
+                            </div>
+                            <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-white">No Upcoming Matches</h3>
+                            <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">No matches are currently scheduled.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Live Matches -->
+            <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-900">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Live Matches</h2>
+                    <a href="{{ route('admin.tournaments') }}" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" wire:navigate>
+                        View all
+                    </a>
+                </div>
+                <div class="mt-6 space-y-4">
+                    @forelse($liveMatches as $match)
+                        <div class="group rounded-lg border border-red-500/30 bg-red-50/50 p-4 transition hover:border-red-500/50 dark:bg-red-900/5">
+                            <!-- Header: Live Badge -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <div>{{ $match->scheduled_at->format('M d, Y') }}</div>
+                                    <div>{{ $match->scheduled_at->format('H:i') }}</div>
+                                </div>
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                                    <span class="relative flex h-2 w-2">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                    </span>
+                                    LIVE
+                                </span>
+                            </div>
+
+                            <!-- Players -->
+                            <div class="text-center mb-4">
+                                <div class="font-medium text-lg text-neutral-900 dark:text-white">
+                                    {{ $match->player1?->name ?? 'Player 1' }}
+                                    <span class="text-neutral-400 dark:text-neutral-500 mx-2">vs</span>
+                                    {{ $match->player2?->name ?? 'Player 2' }}
+                                </div>
+                            </div>
+
+                            <!-- Footer Info -->
+                            <div class="flex items-center justify-between text-sm text-neutral-600 dark:text-neutral-400">
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="map-pin" class="size-4" />
+                                    {{ $match->venue?->name }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="layout-grid" class="size-4" />
+                                    Court {{ $match->court_number }}
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="user" class="size-4" />
+                                    {{ $match->umpireUser?->name ?? 'No umpire' }}
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="rounded-lg border-2 border-dashed border-neutral-200 p-6 text-center dark:border-neutral-700">
+                            <div class="mx-auto h-12 w-12 text-neutral-400 dark:text-neutral-600">
+                                <flux:icon name="play-circle" class="h-12 w-12" />
+                            </div>
+                            <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-white">No Live Matches</h3>
+                            <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">There are no matches being played right now.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-900">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-neutral-900 dark:text-white">Recent Matches</h2>
+                    <a href="{{ route('admin.tournaments') }}" class="text-sm text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300" wire:navigate>
+                        View all
+                    </a>
+                </div>
+                <div class="mt-6 space-y-4">
+                    @forelse($recentMatches as $match)
+                        <div class="group rounded-lg border border-neutral-200 bg-neutral-50 p-4 transition hover:border-blue-500/50 dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:border-blue-500/50">
+                            <!-- Header: Date and Winner -->
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    <div>{{ $match->played_at->format('M d, Y') }}</div>
+                                    <div>{{ $match->played_at->format('H:i') }}</div>
+                                </div>
+                                @if($match->final_winner_id)
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                            {{ $match->winner?->name }}
+                                        </span>
+                                        <span class="text-xl">👑</span>
+                                    </div>
+                                @endif
+                            </div>
+
+                            <!-- Players -->
+                            <div class="text-center mb-4">
+                                <div class="font-medium text-lg text-neutral-900 dark:text-white">
+                                    {{ $match->player1?->name ?? 'Player 1' }}
+                                    <span class="text-neutral-400 dark:text-neutral-500 mx-2">vs</span>
+                                    {{ $match->player2?->name ?? 'Player 2' }}
+                                </div>
+                            </div>
+
+                            <!-- Set Scores -->
+                            <div class="mb-4 grid grid-cols-3 gap-3 bg-white dark:bg-neutral-800 rounded-lg p-3">
+                                @foreach($match->matchSets as $set)
+                                    <div class="text-center">
+                                        <div class="text-xs font-medium text-neutral-500 dark:text-neutral-400">SET {{ $set->set_number }}</div>
+                                        <div class="flex items-center justify-center gap-2 mt-1">
+                                            <span class="text-sm font-bold {{ $set->winner_id === $match->player1_id ? 'text-green-600 dark:text-green-400' : 'text-neutral-900 dark:text-white' }}">
+                                                {{ $set->player1_score }}
+                                            </span>
+                                            <span class="text-xs text-neutral-400">-</span>
+                                            <span class="text-sm font-bold {{ $set->winner_id === $match->player2_id ? 'text-green-600 dark:text-green-400' : 'text-neutral-900 dark:text-white' }}">
+                                                {{ $set->player2_score }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <!-- Footer Info -->
+                            <div class="grid grid-cols-3 gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="map-pin" class="size-4" />
+                                    <span class="truncate">{{ $match->venue?->name }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="layout-grid" class="size-4" />
+                                    <span>Court {{ $match->court_number }}</span>
+                                </div>
+                                <div class="flex items-center gap-1">
+                                    <flux:icon name="user" class="size-4" />
+                                    <span class="truncate">{{ $match->umpireUser?->name ?? 'No umpire' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="rounded-lg border-2 border-dashed border-neutral-200 p-6 text-center dark:border-neutral-700">
+                            <div class="mx-auto h-12 w-12 text-neutral-400 dark:text-neutral-600">
+                                <flux:icon name="trophy" class="h-12 w-12" />
+                            </div>
+                            <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-white">No Recent Matches</h3>
+                            <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">No matches have been completed yet.</p>
+                        </div>
+                    @endforelse
+                </div>
             </div>
         </div>
     </div>

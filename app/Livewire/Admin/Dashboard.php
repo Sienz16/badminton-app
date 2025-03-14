@@ -16,6 +16,8 @@ class Dashboard extends Component
 {
     public function render()
     {
+        $commonRelations = ['player1', 'player2', 'venue', 'umpireUser'];
+
         return view('livewire.admin.dashboard', [
             // Stats
             'totalUsers' => User::count(),
@@ -26,10 +28,21 @@ class Dashboard extends Component
             'liveMatches' => GameMatch::where('status', 'in_progress')->count(),
             'pendingApprovals' => User::whereNull('admin_verified_at')->count(),
 
-            // Upcoming Matches
-            'upcomingMatches' => GameMatch::with(['player1', 'player2', 'venue'])
+            // Load matches with proper relationship handling
+            'upcomingMatches' => GameMatch::with($commonRelations)
                 ->where('status', 'scheduled')
-                ->where('scheduled_at', '>', Carbon::now())
+                ->orderBy('scheduled_at')
+                ->take(5)
+                ->get(),
+            
+            'recentMatches' => GameMatch::with([...$commonRelations, 'winner'])
+                ->where('status', 'completed')
+                ->orderByDesc('played_at')
+                ->take(5)
+                ->get(),
+            
+            'liveMatches' => GameMatch::with($commonRelations)
+                ->where('status', 'in_progress')
                 ->orderBy('scheduled_at')
                 ->take(5)
                 ->get(),

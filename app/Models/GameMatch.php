@@ -5,12 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\User;
 use Carbon\Carbon;
 
 class GameMatch extends Model
 {
     protected $table = 'matches';
+
+    /**
+     * Get the sets for the match.
+     */
+    public function matchSets(): HasMany
+    {
+        return $this->hasMany(MatchSet::class, 'match_id')->orderBy('set_number');
+    }
 
     protected $casts = [
         'completed_at' => 'datetime',
@@ -47,7 +56,7 @@ class GameMatch extends Model
     // Add winner relationship
     public function winner()
     {
-        return $this->belongsTo(User::class, 'winner_id');
+        return $this->belongsTo(User::class, 'final_winner_id');
     }
 
     public function user()
