@@ -15,6 +15,10 @@ class Dashboard extends Component
     public function render()
     {
         return view('livewire.player.dashboard', [
+            'todayMatches' => GameMatch::whereDate('scheduled_at', today())
+                ->with(['player1', 'player2', 'venue', 'umpireUser'])
+                ->get(),
+                
             'upcomingMatches' => GameMatch::upcoming()
                 ->with(['player1', 'player2', 'venue', 'umpireUser'])
                 ->get(),

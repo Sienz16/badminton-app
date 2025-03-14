@@ -32,20 +32,14 @@ class Dashboard extends Component
 
     public function render()
     {
-        $umpire = Auth::user();
-        
-        // Get all matches for today
-        $todayMatches = GameMatch::whereDate('scheduled_at', today())
-            ->with(['player1', 'player2', 'venue', 'umpire'])
-            ->orderBy('scheduled_at')
-            ->get();
-
-        // Add match details for each match
-        $todayMatches->each(function($match) {
-            $match->matchDetails = $this->getMatchDetails($match->id);
-            // Add a flag to identify if the match is assigned to the current umpire
-            $match->isAssignedToMe = $match->umpire_id === Auth::id();
-        });
+        $todayMatches = GameMatch::with(['player1', 'player2', 'matchSets'])
+            ->whereDate('scheduled_at', today())
+            ->get()
+            ->map(function ($match) {
+                $match->matchDetails = $this->getMatchDetails($match->id);
+                $match->isAssignedToMe = $match->umpire_id === Auth::id();
+                return $match;
+            });
 
         // Get all live matches
         $allLiveMatches = GameMatch::where('status', 'in_progress')
@@ -60,10 +54,10 @@ class Dashboard extends Component
             ->limit(6)
             ->get();
 
-        // Get recent matches
-        $recentMatches = GameMatch::where('status', 'completed')
-            ->with(['player1', 'player2', 'venue', 'umpire'])
-            ->orderBy('played_at', 'desc')
+        // Get past matches
+        $pastMatches = GameMatch::with(['player1', 'player2', 'matchSets'])
+            ->where('status', 'completed')
+            ->orderBy('completed_at', 'desc')
             ->limit(6)
             ->get();
 
@@ -71,7 +65,7 @@ class Dashboard extends Component
             'todayMatches' => $todayMatches,
             'allLiveMatches' => $allLiveMatches,
             'upcomingMatches' => $upcomingMatches,
-            'recentMatches' => $recentMatches,
+            'pastMatches' => $pastMatches,
         ]);
     }
 }
