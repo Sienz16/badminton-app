@@ -1,101 +1,104 @@
 <div class="flex h-full w-full flex-1 flex-col gap-4">
     <!-- Header with Stats -->
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+        <!-- Total Users Card -->
+        <div class="rounded-xl border-2 border-green-400/50 bg-white p-6 dark:border-green-600/50 dark:bg-blue-900/30">
             <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-primary-50 p-3 dark:bg-primary-900/50">
-                    <svg class="h-6 w-6 text-primary-600 dark:text-primary-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="rounded-lg bg-blue-100 p-3 dark:bg-blue-900/30">
+                    <svg class="h-6 w-6 text-blue-600 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">Total Users</p>
-                    <p class="text-2xl font-semibold text-neutral-900 dark:text-white">{{ $users->total() }}</p>
+                    <p class="text-sm text-blue-600 dark:text-blue-400">Total Users</p>
+                    <p class="text-2xl font-semibold text-blue-900 dark:text-blue-50">{{ $users->total() }}</p>
                 </div>
             </div>
         </div>
         
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+        <!-- Verified Users Card -->
+        <div class="rounded-xl border-2 border-green-400/50 bg-white p-6 dark:border-green-600/50 dark:bg-emerald-900/30">
             <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-green-50 p-3 dark:bg-green-900/50">
-                    <svg class="h-6 w-6 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="rounded-lg bg-emerald-100 p-3 dark:bg-emerald-900/30">
+                    <svg class="h-6 w-6 text-emerald-600 dark:text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">Verified Users</p>
-                    <p class="text-2xl font-semibold text-neutral-900 dark:text-white">{{ $verifiedCount }}</p>
+                    <p class="text-sm text-emerald-600 dark:text-emerald-400">Verified Users</p>
+                    <p class="text-2xl font-semibold text-emerald-900 dark:text-emerald-50">{{ $verifiedCount }}</p>
                 </div>
             </div>
         </div>
 
-        <div class="rounded-xl border border-neutral-200 bg-white p-6 dark:border-neutral-700 dark:bg-neutral-800">
+        <!-- Pending Verification Card -->
+        <div class="rounded-xl border-2 border-green-400/50 bg-white p-6 dark:border-green-600/50 dark:bg-amber-900/30">
             <div class="flex items-center gap-4">
-                <div class="rounded-lg bg-yellow-50 p-3 dark:bg-yellow-900/50">
-                    <svg class="h-6 w-6 text-yellow-600 dark:text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <div class="rounded-lg bg-amber-100 p-3 dark:bg-amber-900/30">
+                    <svg class="h-6 w-6 text-amber-600 dark:text-amber-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-neutral-600 dark:text-neutral-400">Pending Verification</p>
-                    <p class="text-2xl font-semibold text-neutral-900 dark:text-white">{{ $pendingCount }}</p>
+                    <p class="text-sm text-amber-600 dark:text-amber-400">Pending Verification</p>
+                    <p class="text-2xl font-semibold text-amber-900 dark:text-amber-50">{{ $pendingCount }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Role Tabs -->
-    <div class="rounded-xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
-        <div class="border-b border-neutral-200 dark:border-neutral-700">
+    <div class="rounded-xl border-2 border-green-400/50 bg-white dark:border-green-600/50 dark:bg-green-900/30">
+        <div class="border-b border-green-400/30 dark:border-green-600/30">
             <nav class="flex space-x-8 px-6" aria-label="Tabs">
                 <button
                     wire:click="$set('selectedRole', 'umpire')"
-                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'umpire' ? 'text-primary-600' : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300' }}"
+                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'umpire' ? 'text-green-600' : 'text-green-600/70 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300' }}"
                 >
                     <span class="flex items-center gap-2">
                         Umpires
                         @if($umpireCount > 0)
-                            <span class="rounded-full {{ $selectedRole === 'umpire' ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400' }} px-2.5 py-0.5 text-xs font-medium">
+                            <span class="rounded-full {{ $selectedRole === 'umpire' ? 'bg-green-50 text-green-600 dark:bg-green-900/50 dark:text-green-400' : 'bg-green-50/50 text-green-600 dark:bg-green-900/30 dark:text-green-400' }} px-2.5 py-0.5 text-xs font-medium">
                                 {{ $umpireCount }}
                             </span>
                         @endif
                     </span>
                     @if($selectedRole === 'umpire')
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-600"></span>
+                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-green-600"></span>
                     @endif
                 </button>
 
                 <button
                     wire:click="$set('selectedRole', 'player')"
-                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'player' ? 'text-primary-600' : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300' }}"
+                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'player' ? 'text-green-600' : 'text-green-600/70 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300' }}"
                 >
                     <span class="flex items-center gap-2">
                         Players
                         @if($playerCount > 0)
-                            <span class="rounded-full {{ $selectedRole === 'player' ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400' }} px-2.5 py-0.5 text-xs font-medium">
+                            <span class="rounded-full {{ $selectedRole === 'player' ? 'bg-green-50 text-green-600 dark:bg-green-900/50 dark:text-green-400' : 'bg-green-50/50 text-green-600 dark:bg-green-900/30 dark:text-green-400' }} px-2.5 py-0.5 text-xs font-medium">
                                 {{ $playerCount }}
                             </span>
                         @endif
                     </span>
                     @if($selectedRole === 'player')
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-600"></span>
+                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-green-600"></span>
                     @endif
                 </button>
 
                 <button
                     wire:click="$set('selectedRole', 'admin')"
-                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'admin' ? 'text-primary-600' : 'text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300' }}"
+                    class="relative py-4 text-sm font-medium transition-colors {{ $selectedRole === 'admin' ? 'text-green-600' : 'text-green-600/70 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300' }}"
                 >
                     <span class="flex items-center gap-2">
                         Admins
                         @if($adminCount > 0)
-                            <span class="rounded-full {{ $selectedRole === 'admin' ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/50 dark:text-primary-400' : 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400' }} px-2.5 py-0.5 text-xs font-medium">
+                            <span class="rounded-full {{ $selectedRole === 'admin' ? 'bg-green-50 text-green-600 dark:bg-green-900/50 dark:text-green-400' : 'bg-green-50/50 text-green-600 dark:bg-green-900/30 dark:text-green-400' }} px-2.5 py-0.5 text-xs font-medium">
                                 {{ $adminCount }}
                             </span>
                         @endif
                     </span>
                     @if($selectedRole === 'admin')
-                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-primary-600"></span>
+                        <span class="absolute inset-x-0 bottom-0 h-0.5 bg-green-600"></span>
                     @endif
                 </button>
             </nav>
@@ -124,7 +127,7 @@
             <!-- Add this new button -->
             <div class="md:col-span-2 flex justify-end">
                 <flux:modal.trigger name="create-user-modal">
-                    <flux:button variant="primary">
+                    <flux:button variant="primary" class="bg-green-600 hover:bg-green-700">
                         <span class="flex items-center gap-2">
                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                 <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
@@ -138,27 +141,26 @@
     </div>
 
     <!-- Users Table -->
-    <div class="overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800">
+    <div class="overflow-hidden rounded-xl border-2 border-green-400/50 bg-white dark:border-green-600/50 dark:bg-green-900/30">
         <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700">
-                <thead>
-                    <tr class="bg-neutral-50 dark:bg-neutral-800/50">
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Name</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Email</th>
+            <table class="min-w-full divide-y divide-green-400/30 dark:divide-green-600/30">
+                <thead class="bg-green-50 dark:bg-green-900/30">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Name</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Email</th>
                         @if($selectedRole !== 'admin')
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Admin Verification</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Status</th>
                         @endif
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Status</th>
-                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">Actions</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-700">
+                <tbody class="divide-y divide-green-400/30 dark:divide-green-600/30 bg-white dark:bg-green-900/10">
                     @forelse($users as $user)
-                        <tr class="group transition-colors hover:bg-neutral-50 dark:hover:bg-neutral-800">
-                            <td class="whitespace-nowrap px-6 py-4 text-sm text-neutral-900 dark:text-white">
+                        <tr class="group transition-colors hover:bg-green-50/50 dark:hover:bg-green-900/20">
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-green-900 dark:text-green-50">
                                 {{ $user->name }}
                             </td>
-                            <td class="whitespace-nowrap px-6 py-4 text-sm text-neutral-600 dark:text-neutral-400">
+                            <td class="whitespace-nowrap px-6 py-4 text-sm text-green-600 dark:text-green-400">
                                 {{ $user->email }}
                             </td>
                             @if($selectedRole !== 'admin')
@@ -166,7 +168,7 @@
                                     @if($user->admin_verified_at)
                                         <span class="inline-flex items-center gap-1 rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900/50 dark:text-green-400">
                                             <svg class="h-3 w-3" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
                                             Verified
                                         </span>
@@ -342,8 +344,8 @@
     >
         <form wire:submit="createUser" class="space-y-6 p-6">
             <div>
-                <flux:heading size="lg">Create New User</flux:heading>
-                <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <flux:heading size="lg" class="text-green-900 dark:text-green-50">Create New User</flux:heading>
+                <p class="mt-1 text-sm text-green-600 dark:text-green-400">
                     Fill in the details to create a new player or umpire
                 </p>
             </div>
@@ -351,27 +353,37 @@
             <!-- Basic Information -->
             <div class="grid gap-6 md:grid-cols-2">
                 <div>
-                    <flux:label for="name">Name</flux:label>
-                    <flux:input wire:model="name" type="text" required />
-                    <flux:error field="name" />
+                    <flux:label for="name" class="text-green-700 dark:text-green-300">Name</flux:label>
+                    <flux:input 
+                        wire:model="name" 
+                        type="text" 
+                        required 
+                        class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
+                    />
+                    <flux:error field="name" class="text-red-600" />
                 </div>
 
                 <div>
-                    <flux:label for="email">Email</flux:label>
-                    <flux:input wire:model="email" type="email" required />
+                    <flux:label for="email" class="text-green-700 dark:text-green-300">Email</flux:label>
+                    <flux:input 
+                        wire:model="email" 
+                        type="email" 
+                        required 
+                        class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
+                    />
                     <flux:error field="email" />
                 </div>
 
-                <!-- Add this new password field -->
                 <div>
-                    <flux:label for="password">Temporary Password</flux:label>
+                    <flux:label for="password" class="text-green-700 dark:text-green-300">Temporary Password</flux:label>
                     <flux:input 
                         wire:model="password" 
                         type="password" 
                         required 
                         autocomplete="new-password"
+                        class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
                     />
-                    <p class="mt-1 text-sm text-gray-500">Set a temporary password for the user</p>
+                    <p class="mt-1 text-sm text-green-600 dark:text-green-400">Set a temporary password for the user</p>
                     <flux:error field="password" />
                 </div>
 
@@ -400,8 +412,12 @@
 
             <!-- Bio -->
             <div>
-                <flux:label for="bio">Bio</flux:label>
-                <flux:textarea wire:model="bio" rows="3" />
+                <flux:label for="bio" class="text-green-700 dark:text-green-300">Bio</flux:label>
+                <flux:textarea 
+                    wire:model="bio" 
+                    rows="3"
+                    class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
+                />
                 <flux:error field="bio" />
             </div>
 
@@ -409,14 +425,23 @@
             @if($role_id === 'player')
             <div class="grid gap-6 md:grid-cols-2">
                 <div>
-                    <flux:label for="date_of_birth">Date of Birth</flux:label>
-                    <flux:input wire:model="date_of_birth" type="date" required />
+                    <flux:label for="date_of_birth" class="text-green-700 dark:text-green-300">Date of Birth</flux:label>
+                    <flux:input 
+                        wire:model="date_of_birth" 
+                        type="date" 
+                        required 
+                        class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
+                    />
                     <flux:error field="date_of_birth" />
                 </div>
 
                 <div>
-                    <flux:label for="gender">Gender</flux:label>
-                    <flux:select wire:model="gender" required>
+                    <flux:label for="gender" class="text-green-700 dark:text-green-300">Gender</flux:label>
+                    <flux:select 
+                        wire:model="gender" 
+                        required
+                        class="bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-600/50"
+                    >
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -456,10 +481,10 @@
             @endif
 
             <div class="flex justify-end gap-3">
-                <flux:button type="button" variant="ghost" x-on:click="$dispatch('close')">
+                <flux:button type="button" variant="ghost" x-on:click="$dispatch('close')" class="text-green-700 hover:bg-green-50 dark:text-green-300 dark:hover:bg-green-900/30">
                     Cancel
                 </flux:button>
-                <flux:button type="submit">
+                <flux:button type="submit" variant="primary" class="bg-green-600 hover:bg-green-700">
                     Create User
                 </flux:button>
             </div>

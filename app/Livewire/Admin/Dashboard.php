@@ -16,36 +16,42 @@ class Dashboard extends Component
 {
     public function render()
     {
-        $commonRelations = ['player1', 'player2', 'venue', 'umpireUser'];
+        $commonRelations = ['player1', 'player2', 'venue', 'umpireUser', 'winner'];
 
+        // Get today's matches count
+        $todayMatches = GameMatch::whereDate('scheduled_at', Carbon::today())->count();
+        
+        // Get live matches
+        $liveMatches = GameMatch::where('status', 'in_progress')
+            ->with($commonRelations)
+            ->get();
+        
+        // Get upcoming matches
+        $upcomingMatches = GameMatch::where('status', 'scheduled')
+            ->whereDate('scheduled_at', '>', Carbon::today())
+            ->with($commonRelations)
+            ->orderBy('scheduled_at')
+            ->limit(5)
+            ->get();
+
+        // Get recent matches
+        $recentMatches = GameMatch::where('status', 'completed')
+            ->with($commonRelations)
+            ->orderBy('played_at', 'desc')
+            ->limit(5)
+            ->get();
+        
         return view('livewire.admin.dashboard', [
-            // Stats
             'totalUsers' => User::count(),
             'newUsersToday' => User::whereDate('created_at', Carbon::today())->count(),
             'activeVenues' => Venue::count(),
             'totalCourts' => Venue::sum('courts_count'),
-            'todayMatches' => GameMatch::whereDate('scheduled_at', Carbon::today())->count(),
-            'liveMatches' => GameMatch::where('status', 'in_progress')->count(),
+            'todayMatches' => $todayMatches,
+            'liveMatchesCount' => $liveMatches->count(),
+            'liveMatches' => $liveMatches,
             'pendingApprovals' => User::whereNull('admin_verified_at')->count(),
-
-            // Load matches with proper relationship handling
-            'upcomingMatches' => GameMatch::with($commonRelations)
-                ->where('status', 'scheduled')
-                ->orderBy('scheduled_at')
-                ->take(5)
-                ->get(),
-            
-            'recentMatches' => GameMatch::with([...$commonRelations, 'winner'])
-                ->where('status', 'completed')
-                ->orderByDesc('played_at')
-                ->take(5)
-                ->get(),
-            
-            'liveMatches' => GameMatch::with($commonRelations)
-                ->where('status', 'in_progress')
-                ->orderBy('scheduled_at')
-                ->take(5)
-                ->get(),
+            'upcomingMatches' => $upcomingMatches,
+            'recentMatches' => $recentMatches,
         ]);
     }
 }

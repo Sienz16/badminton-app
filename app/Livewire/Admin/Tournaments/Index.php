@@ -9,9 +9,12 @@ use App\Models\GameMatch;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Livewire\WithPagination;
 
 class Index extends Component
 {
+    use WithPagination;
+
     public $player1Id = '';
     public $player2Id = '';
     public $venueId = '';
@@ -179,13 +182,18 @@ class Index extends Component
     public function render()
     {
         return view('livewire.admin.tournaments.index', [
-            'matches' => GameMatch::with(['player1', 'player2', 'venue'])
+            'matches' => GameMatch::with(['player1', 'player2', 'venue', 'umpire'])
                 ->orderBy('scheduled_at', 'desc')
-                ->get(),
+                ->paginate(9), // Show 9 matches per page to match the 3-column grid
             'venues' => $this->venues,
             'players' => $this->players,
             'umpires' => $this->umpires,
         ]);
+    }
+
+    public function paginationView()
+    {
+        return 'vendor.livewire.custom-pagination';
     }
 }
 
