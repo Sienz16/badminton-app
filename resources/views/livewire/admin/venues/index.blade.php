@@ -4,7 +4,7 @@
         <div class="flex items-center justify-between">
             <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Venues</h1>
             <flux:modal.trigger name="create-venue-modal">
-                <flux:button>
+                <flux:button variant="primary" class="bg-green-600 hover:bg-green-500">
                     <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
@@ -28,16 +28,16 @@
         <!-- Venues Grid -->
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($venues as $venue)
-                <a href="{{ route('admin.venues.show', $venue) }}" wire:navigate class="group relative flex flex-col overflow-hidden rounded-xl border border-neutral-200/50 bg-white transition-all hover:border-neutral-300 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700">
+                <a href="{{ route('admin.venues.show', $venue) }}" wire:navigate class="group relative flex flex-col overflow-hidden rounded-xl border-3 border-green-200 bg-surface-card transition-all hover:border-green-300 hover:shadow-lg dark:border-green-900 dark:bg-zinc-900 dark:hover:border-green-700">
                     <!-- Status Badge (New) -->
                     <div class="absolute left-4 top-4 z-10">
-                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500">
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-500">
                             Active
                         </span>
                     </div>
 
                     <!-- Image Section -->
-                    <div class="aspect-[16/9] w-full overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                    <div class="aspect-[16/9] w-full overflow-hidden bg-green-50 dark:bg-zinc-800">
                         @if ($venue->venue_img && Storage::disk('public')->exists($venue->venue_img))
                             <img 
                                 src="{{ Storage::url($venue->venue_img) }}"
@@ -46,7 +46,7 @@
                             />
                         @else
                             <div class="flex h-full items-center justify-center">
-                                <svg class="h-12 w-12 text-neutral-300 dark:text-neutral-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <svg class="h-12 w-12 text-green-300 dark:text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                 </svg>
                             </div>
@@ -55,9 +55,9 @@
 
                     <!-- Content Section -->
                     <div class="flex flex-1 flex-col p-4">
-                        <h3 class="font-medium text-neutral-900 dark:text-white">{{ $venue->name }}</h3>
-                        <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">{{ $venue->address }}</p>
-                        <div class="mt-4 flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+                        <h3 class="font-medium text-zinc-900 dark:text-white">{{ $venue->name }}</h3>
+                        <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ $venue->address }}</p>
+                        <div class="mt-4 flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
                             <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                             </svg>
@@ -88,17 +88,17 @@
         <flux:modal name="create-venue-modal" :show="$errors->isNotEmpty()" focusable class="max-w-2xl">
             <form wire:submit="createVenue" class="space-y-8 p-6">
                 <div>
-                    <flux:heading size="lg">Add New Venue</flux:heading>
+                    <flux:heading size="lg" class="text-green-900 dark:text-green-50">Add New Venue</flux:heading>
                 </div>
 
                 <!-- Image Upload Section -->
                 <div 
-                    class="relative rounded-lg border-2 border-dashed border-gray-300 p-6 dark:border-gray-700"
+                    class="relative rounded-lg border-2 border-dashed border-green-300 p-6 dark:border-green-700"
                     x-data
-                    x-on:dragover.prevent="$el.classList.add('border-blue-500')"
-                    x-on:dragleave.prevent="$el.classList.remove('border-blue-500')"
+                    x-on:dragover.prevent="$el.classList.add('border-green-500')"
+                    x-on:dragleave.prevent="$el.classList.remove('border-green-500')"
                     x-on:drop.prevent="
-                        $el.classList.remove('border-blue-500');
+                        $el.classList.remove('border-green-500');
                         const input = $el.querySelector('input[type=file]');
                         input.files = $event.dataTransfer.files;
                         input.dispatchEvent(new Event('change'));
@@ -129,7 +129,7 @@
                             </div>
                         @else
                             <!-- Upload UI -->
-                            <div class="mb-3 h-12 w-12 text-gray-400 dark:text-gray-500">
+                            <div class="mb-3 h-12 w-12 text-green-600 dark:text-green-500">
                                 <svg class="h-full w-full" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                                 </svg>
@@ -137,14 +137,14 @@
                         @endif
 
                         <label for="venue_img" class="cursor-pointer">
-                            <span class="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">Upload venue image</span>
-                            <span class="text-gray-500 dark:text-gray-400"> or drag and drop</span>
+                            <span class="text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">Upload venue image</span>
+                            <span class="text-green-700 dark:text-green-400"> or drag and drop</span>
                         </label>
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF up to 20MB</p>
+                        <p class="mt-1 text-xs text-green-600 dark:text-green-400">PNG, JPG, GIF up to 20MB</p>
 
                         <!-- Loading indicator -->
                         <div wire:loading wire:target="venue_img" class="mt-2">
-                            <div class="flex items-center justify-center text-sm text-gray-500">
+                            <div class="flex items-center justify-center text-sm text-green-600">
                                 <svg class="mr-2 h-4 w-4 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -161,18 +161,18 @@
                 <!-- Basic Information Section -->
                 <div class="space-y-6">
                     <div class="flex items-center gap-x-3">
-                        <div class="h-9 w-9 rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
-                            <svg class="h-5 w-5 text-blue-500 dark:text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <div class="h-9 w-9 rounded-lg bg-green-100 p-2 dark:bg-green-900">
+                            <svg class="h-5 w-5 text-green-500 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
                             </svg>
                         </div>
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h2>
+                        <h2 class="text-lg font-medium text-green-900 dark:text-green-50">Basic Information</h2>
                     </div>
 
                     <div class="mt-6 grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-2">
                         <!-- Venue Name -->
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="name" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">
+                            <label for="name" class="block text-sm font-medium leading-6 text-green-900 dark:text-green-100">
                                 Venue Name <span class="text-red-500">*</span>
                             </label>
                             <div class="relative mt-2 rounded-md">
@@ -181,7 +181,7 @@
                                         type="text" 
                                         id="name"
                                         wire:model="name"
-                                        class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 dark:text-white dark:ring-gray-700 dark:placeholder:text-gray-500 dark:focus:ring-blue-500 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 bg-green-50 text-green-900 ring-1 ring-inset ring-green-300 placeholder:text-green-400 focus:ring-2 focus:ring-inset focus:ring-green-600 dark:bg-green-900/30 dark:text-green-100 dark:ring-green-700 dark:placeholder:text-green-500 dark:focus:ring-green-500 sm:text-sm sm:leading-6"
                                         placeholder="Enter venue name"
                                     />
                                     @error('name')
@@ -200,7 +200,7 @@
 
                         <!-- Number of Courts -->
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="courts_count" class="block text-sm font-medium leading-6 text-gray-900 dark:text-gray-100">
+                            <label for="courts_count" class="block text-sm font-medium leading-6 text-green-900 dark:text-green-100">
                                 Number of Courts <span class="text-red-500">*</span>
                             </label>
                             <div class="relative mt-2 rounded-md">
@@ -210,7 +210,7 @@
                                         id="courts_count"
                                         wire:model="courts_count"
                                         min="1"
-                                        class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-800 dark:text-white dark:ring-gray-700 dark:placeholder:text-gray-500 dark:focus:ring-blue-500 sm:text-sm sm:leading-6"
+                                        class="block w-full rounded-md border-0 py-2.5 pl-4 pr-10 bg-green-50 text-green-900 ring-1 ring-inset ring-green-300 placeholder:text-green-400 focus:ring-2 focus:ring-inset focus:ring-green-600 dark:bg-green-900/30 dark:text-green-100 dark:ring-green-700 dark:placeholder:text-green-500 dark:focus:ring-green-500 sm:text-sm sm:leading-6"
                                         placeholder="Enter number of courts"
                                     />
                                     @error('courts_count')

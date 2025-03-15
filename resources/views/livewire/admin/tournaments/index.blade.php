@@ -1,248 +1,161 @@
 <div>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-                <h1 class="text-2xl font-semibold text-zinc-900 dark:text-white">Tournaments</h1>
-                <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-400">Manage all badminton tournaments and their matches.</p>
-            </div>
-            <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                <flux:modal.trigger name="create-match-modal">
-                    <flux:button>
-                        <svg class="h-5 w-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                        Schedule Match
-                    </flux:button>
-                </flux:modal.trigger>
-            </div>
+    <div class="flex items-center justify-between pb-6 border-b border-zinc-200 dark:border-zinc-700">
+        <div>
+            <h1 class="text-2xl font-semibold text-zinc-900 dark:text-white">Tournaments</h1>
+            <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-300">Manage tournament matches and schedules</p>
         </div>
 
-        <!-- Content -->
-        <div class="mt-8 flow-root">
-            <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                    <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg dark:ring-white dark:ring-opacity-10">
-                        <table class="min-w-full divide-y divide-zinc-300 dark:divide-zinc-600">
-                            <thead class="bg-zinc-50 dark:bg-zinc-800">
-                                <tr>
-                                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-zinc-900 dark:text-white sm:pl-6">Match</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Venue</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Court</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Date</th>
-                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-zinc-900 dark:text-white">Status</th>
-                                    <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                        <span class="sr-only">Actions</span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-zinc-200 bg-white dark:divide-zinc-700 dark:bg-zinc-900">
-                                @foreach($matches as $match)
-                                
-                                {{-- @php dd([
-                                    'match' => $match->toArray(),
-                                    'players' => $match->player1?->toArray(),
-                                    'player1_user' => $match->player1?->user?->toArray(),
-                                ]);
-                                @endphp  --}}
-                                    <tr wire:key="{{ $match->id }}">
-                                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
-                                            <div class="font-medium text-zinc-900 dark:text-white">
-                                                @if($match->player1 && $match->player2)
-                                                    {{ $match->player1->name }} vs {{ $match->player2->name }}
-                                                @else
-                                                    <span class="text-red-500">Invalid match data</span>
-                                                @endif
+        <flux:button 
+            x-on:click="$dispatch('open-modal', 'create-match-modal')"
+            variant="primary"
+            class="flex items-center bg-green-600 hover:bg-green-700 focus:ring-green-500"
+        >
+            <svg class="mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Schedule Match
+        </flux:button>
+    </div>
+
+    <!-- Match Grid -->
+    <div class="mt-8">
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            @foreach($matches as $match)
+            <div class="group overflow-hidden rounded-xl border-2 border-green-200 bg-white shadow-sm transition-all hover:shadow-md hover:border-green-300 dark:border-green-700 dark:bg-green-900/30 dark:hover:border-green-600">
+                <div class="p-6">
+                    <!-- Match Header -->
+                    <div class="flex items-center justify-between">
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                            Court {{ $match->court_number }}
+                        </span>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+                            @if($match->isScheduled()) bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400
+                            @elseif($match->isLive()) bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400
+                            @elseif($match->isCompleted()) bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400
+                            @endif">
+                            {{ ucfirst($match->status) }}
+                        </span>
+                    </div>
+
+                    <!-- Players -->
+                    <div class="mt-4">
+                        <div class="rounded-lg border border-green-100 bg-green-50/50 p-4 dark:border-green-800 dark:bg-green-900/20">
+                            <div class="flex items-center justify-between space-x-4">
+                                <!-- Player 1 -->
+                                <div class="flex items-center space-x-3">
+                                    <div class="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full">
+                                        @if($match->player1?->player?->profile_photo)
+                                            <img 
+                                                src="{{ Storage::url($match->player1->player->profile_photo) }}" 
+                                                class="h-full w-full object-cover"
+                                                alt="{{ $match->player1->name }}"
+                                            />
+                                        @else
+                                            <div class="flex h-full w-full items-center justify-center bg-green-100 dark:bg-green-800/70">
+                                                <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                                </svg>
                                             </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                            {{ $match->venue->name }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                            @if($match->court_number)
-                                                Court {{ $match->court_number }}
-                                            @else
-                                                <span class="text-zinc-400 dark:text-zinc-500">Not assigned</span>
-                                            @endif
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm text-zinc-500 dark:text-zinc-400">
-                                            {{ $match->scheduled_at->format('M d, Y H:i') }}
-                                        </td>
-                                        <td class="whitespace-nowrap px-3 py-4 text-sm">
-                                            <span @class([
-                                                'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
-                                                'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-400/10 dark:text-green-400 dark:ring-green-400/20' => $match->status === 'completed',
-                                                'bg-yellow-50 text-yellow-700 ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-400 dark:ring-yellow-400/20' => $match->status === 'in_progress',
-                                                'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-400/10 dark:text-blue-400 dark:ring-blue-400/20' => $match->status === 'scheduled',
-                                            ])>
-                                                {{ str($match->status)->title() }}
-                                            </span>
-                                        </td>
-                                        <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                                            <a href="{{ route('admin.tournaments.show', $match) }}" class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" wire:navigate>
-                                                View<span class="sr-only">, {{ $match->player1->name }} vs {{ $match->player2->name }}</span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-medium text-green-900 dark:text-green-100">{{ $match->player1->name }}</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">Player 1</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-800/50">
+                                    <span class="text-sm font-medium text-green-600 dark:text-green-400">vs</span>
+                                </div>
+
+                                <!-- Player 2 -->
+                                <div class="flex items-center space-x-3">
+                                    <div class="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full">
+                                        @if($match->player2?->player?->profile_photo)
+                                            <img 
+                                                src="{{ Storage::url($match->player2->player->profile_photo) }}" 
+                                                class="h-full w-full object-cover"
+                                                alt="{{ $match->player2->name }}"
+                                            />
+                                        @else
+                                            <div class="flex h-full w-full items-center justify-center bg-green-100 dark:bg-green-800/70">
+                                                <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                                </svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="truncate text-sm font-medium text-green-900 dark:text-green-100">{{ $match->player2->name }}</p>
+                                        <p class="text-xs text-green-600 dark:text-green-400">Player 2</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Match Details -->
+                    <div class="mt-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <!-- Date -->
+                            <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                                <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25" />
+                                </svg>
+                                {{ $match->scheduled_at->format('M d, Y') }}
+                            </div>
+
+                            <!-- Time -->
+                            <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                                <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                </svg>
+                                @if($match->status === 'completed')
+                                    {{ $match->played_at->format('h:i A') }}
+                                @else
+                                    {{ $match->scheduled_at->format('h:i A') }}
+                                @endif
+                            </div>
+                        </div>
+
+                        <!-- Venue -->
+                        <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                            <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                            </svg>
+                            {{ $match->venue->name }}
+                        </div>
+
+                        <!-- Umpire -->
+                        <div class="flex items-center text-sm text-green-600 dark:text-green-400">
+                            <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                            </svg>
+                            {{ $match->umpire?->name ?? 'Not Assigned' }}
+                        </div>
+                    </div>
+
+                    <!-- Action Button -->
+                    <div class="mt-6">
+                        <a href="{{ route('admin.tournaments.show', $match) }}" 
+                           class="block w-full rounded-lg border-2 border-green-200 bg-green-50 px-4 py-2.5 text-center text-sm font-medium text-green-700 transition-all 
+                                  hover:bg-green-100 hover:text-green-800
+                                  dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30 dark:hover:text-green-300">
+                            View Details
+                        </a>
                     </div>
                 </div>
             </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 pt-6 border-t border-grey-200 dark:border-grey-700">
+            {{ $matches->links() }}
         </div>
     </div>
 
-    <!-- Create Match Modal -->
-    <flux:modal name="create-match-modal" :show="$errors->isNotEmpty()" focusable class="max-w-4xl"> <!-- Increased to max-w-7xl -->
-        <form wire:submit="createMatch" class="space-y-8">
-            <div class="p-8"> <!-- Increased padding from p-6 to p-8 -->
-                <!-- Header -->
-                <div class="mb-8">
-                    <flux:heading size="lg">Schedule New Match</flux:heading>
-                    <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                        Fill in the details below to schedule a new match
-                    </p>
-                </div>
-
-                <!-- Fixed height container -->
-                <div class="space-y-8 h-[400px] overflow-y-auto px-4"> <!-- Increased space-y-6 to space-y-8 and added px-4 -->
-                    <!-- Players Selection -->
-                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2"> <!-- Increased gap-6 to gap-8 -->
-                        <div class="w-full">
-                            <flux:label for="player1">Player 1</flux:label>
-                            <div class="mt-2"> <!-- Added wrapper div with margin -->
-                                <flux:select 
-                                    wire:model="player1Id"
-                                    class="w-full"
-                                >
-                                    <option value="">Select Player 1</option>
-                                    @foreach($players as $player)
-                                        <option value="{{ $player->id }}">{{ $player->name }}</option>
-                                    @endforeach
-                                </flux:select>
-                            </div>
-                            @error('player1Id') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="w-full">
-                            <flux:label for="player2">Player 2</flux:label>
-                            <div class="mt-2">
-                                <flux:select 
-                                    wire:model="player2Id"
-                                    class="w-full"
-                                >
-                                    <option value="">Select Player 2</option>
-                                    @foreach($players as $player)
-                                        <option value="{{ $player->id }}">{{ $player->name }}</option>
-                                    @endforeach
-                                </flux:select>
-                            </div>
-                            @error('player2Id') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-
-                    <!-- Date and Time -->
-                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                        <div class="w-full">
-                            <flux:label for="date">Date</flux:label>
-                            <div class="mt-2">
-                                <flux:input 
-                                    type="date" 
-                                    wire:model.live="date"
-                                    min="{{ date('Y-m-d') }}"
-                                    class="w-full"
-                                />
-                            </div>
-                            @error('date') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="w-full">
-                            <flux:label for="startTime">Start Time</flux:label>
-                            <div class="mt-2">
-                                <flux:input 
-                                    type="time" 
-                                    wire:model.live="startTime"
-                                    class="w-full"
-                                />
-                            </div>
-                            @error('startTime') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-
-                    <!-- Venue and Court -->
-                    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
-                        <div class="w-full">
-                            <flux:label for="venue">Venue</flux:label>
-                            <div class="mt-2">
-                                <flux:select 
-                                    wire:model.live="venueId"
-                                    class="w-full min-w-[290px]"
-                                >
-                                    <option value="">Select Venue</option>
-                                    @foreach($venues as $venue)
-                                        <option value="{{ $venue->id }}">{{ $venue->name }}</option>
-                                    @endforeach
-                                </flux:select>
-                            </div>
-                            @error('venueId') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-
-                        <div class="w-full">
-                            <flux:label for="court">Court Number</flux:label>
-                            <div class="mt-2">
-                                <flux:select 
-                                    wire:model.live="courtNumber"
-                                    class="w-full min-w-[290px]"
-                                >
-                                    <option value="">Select Court</option>
-                                    @if(count($availableCourts) > 0)
-                                        @foreach($availableCourts as $court)
-                                            <option value="{{ $court }}">Court {{ $court }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="" disabled>No courts available for selected time</option>
-                                    @endif
-                                </flux:select>
-                            </div>
-                            @error('courtNumber') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                        </div>
-                    </div>
-
-                    <!-- Umpire Selection -->
-                    <div class="w-full">
-                        <flux:label for="umpire">Umpire</flux:label>
-                        <div class="mt-2">
-                            <flux:select 
-                                wire:model="umpireId"
-                                class="w-full"
-                            >
-                                <option value="">Select Umpire</option>
-                                @foreach($umpires as $umpire)
-                                    <option value="{{ $umpire->id }}">{{ $umpire->name }}</option>
-                                @endforeach
-                            </flux:select>
-                        </div>
-                        @error('umpireId') <span class="mt-2 text-sm text-red-600">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer -->
-            <div class="flex items-center justify-end gap-3 bg-zinc-50 px-8 py-4 dark:bg-zinc-800/50"> <!-- Increased padding -->
-                <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
-                </flux:modal.close>
-
-                <flux:button type="submit" variant="primary">
-                    <div wire:loading.remove wire:target="createMatch">
-                        Schedule Match
-                    </div>
-                    <div wire:loading wire:target="createMatch">
-                        Scheduling...
-                    </div>
-                </flux:button>
-            </div>
-        </form>
-    </flux:modal>
+    <!-- Include Create Match Modal -->
+    @include('livewire.admin.tournaments.modals.create-match-modal')
 </div>

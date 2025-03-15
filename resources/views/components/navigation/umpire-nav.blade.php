@@ -3,6 +3,10 @@
         :href="route('umpire.dashboard')" 
         :current="request()->routeIs('umpire.dashboard')"
         wire:navigate
+        class="text-green-900 dark:text-green-100 
+               hover:bg-green-200 dark:hover:bg-green-800 
+               [&[aria-current]]:bg-green-300 dark:[&[aria-current]]:bg-green-700
+               [&[aria-current]]:text-green-950 dark:[&[aria-current]]:text-green-50"
     >
         {{ __('Dashboard') }}
     </flux:navbar.item>
@@ -10,6 +14,10 @@
         :href="route('umpire.matches')" 
         :current="request()->routeIs('umpire.matches')"
         wire:navigate
+        class="text-green-900 dark:text-green-100 
+               hover:bg-green-200 dark:hover:bg-green-800 
+               [&[aria-current]]:bg-green-300 dark:[&[aria-current]]:bg-green-700
+               [&[aria-current]]:text-green-950 dark:[&[aria-current]]:text-green-50"
     >
         {{ __('My Matches') }}
     </flux:navbar.item>

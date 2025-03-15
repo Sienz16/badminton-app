@@ -11,6 +11,30 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
+    /* Primary Brand Colors */
+    --color-primary: #5DB996;          /* Main brand color */
+    --color-primary-light: #7DC7AA;    /* Lighter shade for hover states */
+    --color-primary-dark: #4A9478;     /* Darker shade for active states */
+
+    /* Green System Colors - Light Mode */
+    --color-green-50: #F0FDF4;         /* Very light background */
+    --color-green-100: #DCFCE7;        /* Light background, borders */
+    --color-green-200: #BBF7D0;        /* Card backgrounds */
+    --color-green-300: #86EFAC;        /* Secondary elements */
+    --color-green-400: #4ADE80;        /* Accent elements */
+    --color-green-500: #5DB996;        /* Primary brand */
+    --color-green-600: #4A9478;        /* Text, icons */
+    --color-green-700: #3D7A63;        /* Headings */
+    --color-green-800: #2F5C4B;        /* Bold text */
+    --color-green-900: #1E3D32;        /* Dark accents */
+    --color-green-950: #0F1F19;        /* Very dark backgrounds */
+
+    /* Surface Colors - Light Mode */
+    --color-surface-primary: var(--color-green-100);
+    --color-surface-secondary: var(--color-green-50);
+    --color-surface-card: #FFFFFF;
+    --color-surface-card-hover: var(--color-green-50);
+
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
     --color-zinc-200: #e5e5e5;
@@ -30,9 +54,24 @@
 
 @layer theme {
     .dark {
-        --color-accent: var(--color-white);
-        --color-accent-content: var(--color-white);
-        --color-accent-foreground: var(--color-neutral-800);
+        /* Green System Colors - Dark Mode */
+        --color-green-50: #0F1F19;     /* Very dark background */
+        --color-green-100: #1E3D32;    /* Dark background */
+        --color-green-200: #2F5C4B;    /* Darker elements */
+        --color-green-300: #3D7A63;    /* Main elements */
+        --color-green-400: #4A9478;    /* Primary elements */
+        --color-green-500: #5DB996;    /* Accent elements */
+        --color-green-600: #7DC7AA;    /* Text, icons */
+        --color-green-700: #9ED5BE;    /* Headings */
+        --color-green-800: #BFE4D2;    /* Bold text */
+        --color-green-900: #E0F2E9;    /* Light accents */
+        --color-green-950: #F0FDF4;    /* Very light text */
+
+        /* Surface Colors - Dark Mode */
+        --color-surface-primary: var(--color-green-900);
+        --color-surface-secondary: var(--color-green-800);
+        --color-surface-card: var(--color-green-100);
+        --color-surface-card-hover: var(--color-green-200);
     }
 }
 

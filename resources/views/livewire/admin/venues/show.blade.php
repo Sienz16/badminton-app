@@ -22,7 +22,7 @@
             <!-- Venue Image -->
             <div class="lg:col-span-2">
                 @if($venue->venue_img && Storage::disk('public')->exists($venue->venue_img))
-                    <div class="overflow-hidden rounded-lg">
+                    <div class="overflow-hidden rounded-lg border border-green-200 dark:border-green-700">
                         <img 
                             src="{{ Storage::url($venue->venue_img) }}"
                             alt="{{ $venue->name }}"
@@ -34,24 +34,26 @@
 
             <!-- Venue Details -->
             <div class="lg:col-span-1">
-                <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800">
+                <div class="overflow-hidden rounded-lg border border-green-200 bg-white shadow-sm transition-all hover:border-green-300 
+                            dark:border-green-700 dark:bg-green-900/30 dark:hover:border-green-600">
                     <div class="px-4 py-5 sm:p-6">
                         <!-- Status Badge -->
                         <div class="mb-6">
-                            <span class="inline-flex items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500">
+                            <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 
+                                       dark:bg-green-900/30 dark:text-green-400">
                                 Active
                             </span>
                         </div>
 
                         <!-- Address -->
                         <div class="flex items-start gap-x-3">
-                            <svg class="h-5 w-5 flex-shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <svg class="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                             </svg>
                             <div>
-                                <h3 class="text-sm font-medium text-zinc-900 dark:text-white">Location</h3>
-                                <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ $venue->address }}</p>
+                                <h3 class="text-sm font-medium text-green-900 dark:text-green-50">Location</h3>
+                                <p class="mt-1 text-sm text-green-700 dark:text-green-300">{{ $venue->address }}</p>
                             </div>
                         </div>
 
@@ -59,39 +61,29 @@
                         <div class="mt-6 space-y-6">
                             <!-- Courts -->
                             <div class="flex items-start gap-x-3">
-                                <svg class="h-5 w-5 flex-shrink-0 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                                <svg class="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                                 </svg>
                                 <div>
-                                    <h3 class="text-sm font-medium text-zinc-900 dark:text-white">Available Courts</h3>
-                                    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ $venue->courts_count }} courts</p>
+                                    <h3 class="text-sm font-medium text-green-900 dark:text-green-50">Courts</h3>
+                                    <p class="mt-1 text-sm text-green-700 dark:text-green-300">{{ $venue->courts_count }} Available Courts</p>
                                 </div>
                             </div>
 
-                            <!-- Contact Information -->
-                            <div class="flex items-start gap-3">
-                                <svg class="h-5 w-5 flex-shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
-                                </svg>
-                                <div class="text-sm text-zinc-600 dark:text-zinc-400">
-                                    @if($venue->contact_phone)
-                                        {{ $venue->contact_phone }}
-                                    @else
-                                        <em>N/A</em>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="flex items-start gap-3">
-                                <svg class="h-5 w-5 flex-shrink-0 text-zinc-400 dark:text-zinc-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <!-- Contact Email -->
+                            <div class="flex items-start gap-x-3">
+                                <svg class="h-5 w-5 flex-shrink-0 text-green-600 dark:text-green-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
                                 </svg>
-                                <div class="text-sm text-zinc-600 dark:text-zinc-400">
-                                    @if($venue->contact_email)
-                                        {{ $venue->contact_email }}
-                                    @else
-                                        <em>N/A</em>
-                                    @endif
+                                <div>
+                                    <h3 class="text-sm font-medium text-green-900 dark:text-green-50">Contact Email</h3>
+                                    <p class="mt-1 text-sm text-green-700 dark:text-green-300">
+                                        @if($venue->contact_email)
+                                            {{ $venue->contact_email }}
+                                        @else
+                                            <em>N/A</em>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -137,38 +129,29 @@
                 <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">View and manage court schedules for this venue.</p>
             </div>
 
-            <!-- Date and Time Selector -->
-            <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:max-w-2xl">
-                <div>
-                    <label for="schedule-date" class="block text-sm font-medium text-zinc-900 dark:text-white">Select Date</label>
-                    <div class="relative mt-1.5 rounded-lg">
-                        <input 
-                            type="date" 
-                            id="schedule-date"
-                            wire:model.live="selectedDate"
-                            class="block w-full rounded-lg border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:ring-zinc-700 dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                        >
-                    </div>
-                </div>
-
-                <div>
-                    <label for="schedule-time" class="block text-sm font-medium text-zinc-900 dark:text-white">Select Time</label>
-                    <div class="relative mt-1.5 rounded-lg">
-                        <input 
-                            type="time" 
-                            id="schedule-time"
-                            wire:model.live="selectedTime"
-                            class="block w-full rounded-lg border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm ring-1 ring-inset ring-zinc-200 placeholder:text-zinc-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:ring-zinc-700 dark:placeholder:text-zinc-500 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                        >
-                    </div>
+            <!-- Date Selector -->
+            <div class="mb-6 lg:max-w-xs">
+                <label for="schedule-date" class="block text-sm font-medium text-green-900 dark:text-green-50">Select Date</label>
+                <div class="relative mt-1.5">
+                    <input 
+                        type="date" 
+                        id="schedule-date"
+                        wire:model.live="selectedDate"
+                        class="block w-full rounded-lg border-green-200 bg-white px-3 py-2.5 text-sm text-green-900 
+                               shadow-sm ring-1 ring-inset ring-green-200 placeholder:text-green-400 
+                               focus:border-green-500 focus:ring-2 focus:ring-green-500 
+                               dark:border-green-700 dark:bg-green-900/30 dark:text-green-50 
+                               dark:ring-green-700 dark:placeholder:text-green-500 
+                               dark:focus:border-green-500 dark:focus:ring-green-500"
+                    >
                 </div>
             </div>
 
             <!-- Courts Grid -->
             <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach($courts as $court)
-                    <div class="overflow-hidden rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-800">
-                        <div class="border-b border-zinc-200 bg-zinc-50 px-4 py-3 dark:border-zinc-700 dark:bg-zinc-900">
+                    <div class="overflow-hidden rounded-lg border-3 border-green-200 bg-white dark:border-green-700 dark:bg-green-900/30">
+                        <div class="border-b border-green-200 bg-green-50 px-4 py-3 dark:border-green-700 dark:bg-green-900/50">
                             <div class="flex items-center justify-between">
                                 <h3 class="text-lg font-medium text-zinc-900 dark:text-white">Court {{ $court->number }}</h3>
                                 <div class="flex items-center gap-2">
@@ -198,16 +181,16 @@
                                     
                                     @if($matchesForDate->isNotEmpty())
                                         @foreach($matchesForDate as $match)
-                                            <div class="rounded-md border border-zinc-200 p-3 dark:border-zinc-700 mb-2">
-                                                <div class="flex items-center justify-between">
+                                            <div class="rounded-md">
+                                                <div class="flex items-center border-2 border-green-200 justify-between bg-green-50 dark:bg-green-900/30 p-3 rounded-md">
                                                     <div>
                                                         <div class="flex items-center gap-2 mb-1">
-                                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-500">
+                                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border-2 border-amber-100 bg-amber-50 text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">
                                                                 {{ $match->scheduled_at->format('H:i') }} - 
                                                                 {{ $match->scheduled_at->addHours(1)->format('H:i') }}
                                                             </span>
                                                         </div>
-                                                        <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                                                        <p class="text-sm text-green-900 dark:text-green-50">
                                                             {{ $match->player1->name }} vs {{ $match->player2->name }}
                                                         </p>
                                                     </div>
@@ -221,16 +204,6 @@
                                         <p class="text-sm text-zinc-500 dark:text-zinc-400">No matches scheduled for this date</p>
                                     @endif
                                 </div>
-
-                                @if($selectedTime && $court->isAvailable($selectedDate, $selectedTime))
-                                    <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-700">
-                                        <div class="flex items-center justify-end">
-                                            <flux:button size="xs" wire:click="scheduleMatch({{ $court->id }})">
-                                                Schedule Match
-                                            </flux:button>
-                                        </div>
-                                    </div>
-                                @endif
                             @endif
                         </div>
                     </div>
