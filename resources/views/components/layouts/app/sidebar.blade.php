@@ -3,8 +3,8 @@
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-green-50 dark:bg-green-950">
-        <flux:sidebar sticky stashable class="border-r border-green-400/50 bg-green-200/90 dark:border-green-600/20 dark:bg-green-800/90">
+    <body class="min-h-screen bg-green-50 dark:bg-zinc-800">
+        <flux:sidebar sticky stashable class="border-r border-green-400/50 bg-green-300/90 dark:border-green-600/20 dark:bg-green-200/90">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
             <a href="{{ route('dashboard') }}" class="mr-5 flex items-center space-x-2" wire:navigate>
@@ -67,7 +67,7 @@
         </flux:sidebar>
 
         <!-- Mobile Header -->
-        <flux:header class="lg:hidden bg-green-200/90 dark:bg-green-800/90 border-b border-green-400/50 dark:border-green-600/20">
+        <flux:header class="lg:hidden bg-green-300/90 dark:bg-green-800/90 border-b border-green-400/50 dark:border-green-600/20">
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />

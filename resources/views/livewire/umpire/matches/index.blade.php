@@ -23,7 +23,7 @@
 
                 <button 
                     wire:click="$set('activeTab', 'live')"
-                    class="{{ $activeTab === 'live' ? 'border-green-500 text-green-600 dark:text-green-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                    class="{{ $activeTab === 'live' ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
                 >
                     {{ __('Live') }}
                     @if($liveCount > 0)
@@ -52,32 +52,70 @@
             @if($activeTab === 'upcoming')
                 <div class="flex flex-col space-y-4">
                     @forelse($upcomingMatches as $match)
-                        <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800">
+                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 
+                                  border-2 border-green-300 dark:border-green-700 
+                                  transition-all duration-300 
+                                  hover:border-green-500/50 dark:hover:border-green-500/50 
+                                  hover:shadow-xl hover:scale-[1.02]">
                             <div class="p-6">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <div>
                                             <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-                                                {{ $match->player1?->name ?? 'Player 1' }} vs {{ $match->player2?->name ?? 'Player 2' }}
+                                                <div class="flex items-center gap-4">
+                                                    <!-- Player 1 -->
+                                                    <div class="flex items-center gap-2">
+                                                        @if($match->player1?->player?->profile_photo)
+                                                            <img src="{{ Storage::url($match->player1->player->profile_photo) }}" 
+                                                                 class="h-10 w-10 rounded-full object-cover"
+                                                                 alt="{{ $match->player1->name }}">
+                                                        @else
+                                                            <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                      bg-green-100 font-medium text-green-800 
+                                                                      dark:bg-green-900/30 dark:text-green-400">
+                                                                {{ substr($match->player1->name ?? 'P1', 0, 2) }}
+                                                            </div>
+                                                        @endif
+                                                        <span>{{ $match->player1?->name ?? 'Player 1' }}</span>
+                                                    </div>
+                                                    
+                                                    <span class="text-sm font-semibold text-green-600 dark:text-green-400">VS</span>
+                                                    
+                                                    <!-- Player 2 -->
+                                                    <div class="flex items-center gap-2">
+                                                        <span>{{ $match->player2?->name ?? 'Player 2' }}</span>
+                                                        @if($match->player2?->player?->profile_photo)
+                                                            <img src="{{ Storage::url($match->player2->player->profile_photo) }}" 
+                                                                 class="h-10 w-10 rounded-full object-cover"
+                                                                 alt="{{ $match->player2->name }}">
+                                                        @else
+                                                            <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                      bg-green-100 font-medium text-green-800 
+                                                                      dark:bg-green-900/30 dark:text-green-400">
+                                                                {{ substr($match->player2->name ?? 'P2', 0, 2) }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </h3>
-                                            <div class="mt-1 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
+                                            <div class="mt-2 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
                                                 <div class="flex items-center">
                                                     <flux:icon name="map-pin" class="mr-1.5 h-4 w-4" />
                                                     {{ $match->venue?->name }}
                                                 </div>
                                                 <div class="flex items-center">
-                                                    <flux:icon name="clock" class="mr-1.5 h-4 w-4" />
-                                                    {{ $match->scheduled_at->format('M j, Y g:i A') }}
+                                                    <flux:icon name="calendar" class="mr-1.5 h-4 w-4" />
+                                                    {{ $match->scheduled_at?->format('M j, Y g:i A') }}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <a 
-                                        href="{{ route('umpire.matches.show', $match) }}"
-                                        wire:navigate
-                                        class="inline-flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400"
-                                    >
-                                        {{ __('Start Match') }}
+                                    <a href="{{ route('umpire.matches.show', $match) }}"
+                                       wire:navigate
+                                       class="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm 
+                                              hover:bg-green-500 dark:bg-green-500 dark:hover:bg-green-400 
+                                              transition-colors duration-300">
+                                        {{ __('View Match') }}
                                     </a>
                                 </div>
                             </div>
@@ -95,20 +133,58 @@
             @elseif($activeTab === 'live')
                 <div class="flex flex-col space-y-4">
                     @forelse($liveMatches as $match)
-                        <div class="overflow-hidden rounded-lg bg-white shadow-md dark:bg-zinc-800 border border-red-500/30">
+                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 
+                                  border-2 border-red-300 dark:border-red-700
+                                  transition-all duration-300 
+                                  hover:border-red-500/50 dark:hover:border-red-500/50 
+                                  hover:shadow-xl hover:scale-[1.02]">
                             <div class="p-6">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <div>
                                             <div class="flex items-center space-x-2">
                                                 <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-                                                    {{ $match->player1?->name ?? 'Player 1' }} vs {{ $match->player2?->name ?? 'Player 2' }}
+                                                    <div class="flex items-center gap-4">
+                                                        <!-- Player 1 -->
+                                                        <div class="flex items-center gap-2">
+                                                            @if($match->player1?->player?->profile_photo)
+                                                                <img src="{{ Storage::url($match->player1->player->profile_photo) }}" 
+                                                                     class="h-10 w-10 rounded-full object-cover"
+                                                                     alt="{{ $match->player1->name }}">
+                                                            @else
+                                                                <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                          bg-red-100 font-medium text-red-800 
+                                                                          dark:bg-red-900/30 dark:text-red-400">
+                                                                    {{ substr($match->player1->name ?? 'P1', 0, 2) }}
+                                                                </div>
+                                                            @endif
+                                                            <span>{{ $match->player1?->name ?? 'Player 1' }}</span>
+                                                        </div>
+                                                        
+                                                        <span class="text-sm font-semibold text-red-600 dark:text-red-400">VS</span>
+                                                        
+                                                        <!-- Player 2 -->
+                                                        <div class="flex items-center gap-2">
+                                                            <span>{{ $match->player2?->name ?? 'Player 2' }}</span>
+                                                            @if($match->player2?->player?->profile_photo)
+                                                                <img src="{{ Storage::url($match->player2->player->profile_photo) }}" 
+                                                                     class="h-10 w-10 rounded-full object-cover"
+                                                                     alt="{{ $match->player2->name }}">
+                                                            @else
+                                                                <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                          bg-red-100 font-medium text-red-800 
+                                                                          dark:bg-red-900/30 dark:text-red-400">
+                                                                    {{ substr($match->player2->name ?? 'P2', 0, 2) }}
+                                                                </div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
                                                 </h3>
                                                 <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:bg-red-900/30 dark:text-red-400">
                                                     Live
                                                 </span>
                                             </div>
-                                            <div class="mt-1 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
+                                            <div class="mt-2 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
                                                 <div class="flex items-center">
                                                     <flux:icon name="map-pin" class="mr-1.5 h-4 w-4" />
                                                     {{ $match->venue?->name }}
@@ -116,11 +192,11 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <a 
-                                        href="{{ route('umpire.matches.show', $match) }}"
-                                        wire:navigate
-                                        class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400"
-                                    >
+                                    <a href="{{ route('umpire.matches.show', $match) }}"
+                                       wire:navigate
+                                       class="inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm 
+                                              hover:bg-red-500 dark:bg-red-500 dark:hover:bg-red-400 
+                                              transition-colors duration-300">
                                         {{ __('Continue Match') }}
                                     </a>
                                 </div>
@@ -139,15 +215,53 @@
             @else
                 <div class="flex flex-col space-y-4">
                     @forelse($completedMatches as $match)
-                        <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800">
+                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 
+                                  border-2 border-blue-300 dark:border-blue-700
+                                  transition-all duration-300 
+                                  hover:border-blue-500/50 dark:hover:border-blue-500/50 
+                                  hover:shadow-xl hover:scale-[1.02]">
                             <div class="p-6">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
                                         <div>
                                             <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-                                                {{ $match->player1?->name ?? 'Player 1' }} vs {{ $match->player2?->name ?? 'Player 2' }}
+                                                <div class="flex items-center gap-4">
+                                                    <!-- Player 1 -->
+                                                    <div class="flex items-center gap-2">
+                                                        @if($match->player1?->player?->profile_photo)
+                                                            <img src="{{ Storage::url($match->player1->player->profile_photo) }}" 
+                                                                 class="h-10 w-10 rounded-full object-cover"
+                                                                 alt="{{ $match->player1->name }}">
+                                                        @else
+                                                            <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                      bg-blue-100 font-medium text-blue-800 
+                                                                      dark:bg-blue-900/30 dark:text-blue-400">
+                                                                {{ substr($match->player1->name ?? 'P1', 0, 2) }}
+                                                            </div>
+                                                        @endif
+                                                        <span>{{ $match->player1?->name ?? 'Player 1' }}</span>
+                                                    </div>
+                                                    
+                                                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">VS</span>
+                                                    
+                                                    <!-- Player 2 -->
+                                                    <div class="flex items-center gap-2">
+                                                        <span>{{ $match->player2?->name ?? 'Player 2' }}</span>
+                                                        @if($match->player2?->player?->profile_photo)
+                                                            <img src="{{ Storage::url($match->player2->player->profile_photo) }}" 
+                                                                 class="h-10 w-10 rounded-full object-cover"
+                                                                 alt="{{ $match->player2->name }}">
+                                                        @else
+                                                            <div class="flex h-10 w-10 items-center justify-center rounded-full 
+                                                                      bg-blue-100 font-medium text-blue-800 
+                                                                      dark:bg-blue-900/30 dark:text-blue-400">
+                                                                {{ substr($match->player2->name ?? 'P2', 0, 2) }}
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </h3>
-                                            <div class="mt-1 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
+                                            <div class="mt-2 flex items-center space-x-3 text-sm text-gray-500 dark:text-gray-400">
                                                 <div class="flex items-center">
                                                     <flux:icon name="map-pin" class="mr-1.5 h-4 w-4" />
                                                     {{ $match->venue?->name }}
@@ -174,43 +288,41 @@
                                 <div class="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
                                     <div class="grid grid-cols-3 gap-4">
                                         @foreach(range(1, 3) as $setNumber)
-                                        @php
-                                            $setWinner = DB::table('match_sets')
-                                                ->where('match_id', $match->id)
-                                                ->where('set_number', $setNumber)
-                                                ->first();
-                                            
-                                            $winnerName = null;
-                                            if ($setWinner?->winner_id) {
-                                                $winnerName = $setWinner->winner_id === $match->player1_id 
-                                                    ? $match->player1?->name 
-                                                    : $match->player2?->name;
-                                            }
-                                        @endphp
-                                        <div class="text-center">
-                                            <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                                                SET {{ $setNumber }}
+                                            @php
+                                                $setWinner = DB::table('match_sets')
+                                                    ->where('match_id', $match->id)
+                                                    ->where('set_number', $setNumber)
+                                                    ->first();
+                                                
+                                                $winnerName = null;
+                                                if ($setWinner?->winner_id) {
+                                                    $winnerName = $setWinner->winner_id === $match->player1_id 
+                                                        ? $match->player1?->name 
+                                                        : $match->player2?->name;
+                                                }
+                                            @endphp
+                                            <div class="text-center">
+                                                <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                    SET {{ $setNumber }}
+                                                </div>
+                                                <div class="text-lg font-bold text-gray-900 dark:text-white">
+                                                    {{ $setWinner?->player1_score ?? '0' }} - {{ $setWinner?->player2_score ?? '0' }}
+                                                </div>
+                                                @if($winnerName)
+                                                    <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                                        Winner: {{ $winnerName }}
+                                                    </div>
+                                                @endif
                                             </div>
-                                            <div class="text-lg font-bold text-gray-900 dark:text-white">
-                                                {{ $setWinner?->player1_score ?? '0' }} - {{ $setWinner?->player2_score ?? '0' }}
-                                            </div>
-                                            @if($winnerName)
-                                            <div class="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                                Winner: {{ $winnerName }}
-                                            </div>
-                                            @endif
-                                        </div>
                                         @endforeach
                                     </div>
                                 </div>
 
                                 <!-- View Details Link -->
                                 <div class="mt-4 text-right">
-                                    <a 
-                                        href="{{ route('umpire.matches.show', $match) }}"
-                                        wire:navigate
-                                        class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium"
-                                    >
+                                    <a href="{{ route('umpire.matches.show', $match) }}"
+                                       wire:navigate
+                                       class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">
                                         {{ __('View Match Details') }} →
                                     </a>
                                 </div>

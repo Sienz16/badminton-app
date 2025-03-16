@@ -149,8 +149,9 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Name</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Email</th>
                         @if($selectedRole !== 'admin')
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Status</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Verification Status</th>
                         @endif
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Account Status</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-green-600 dark:text-green-400">Actions</th>
                     </tr>
                 </thead>
@@ -222,12 +223,11 @@
                                         <span class="flex items-center gap-1">
                                             @if($user->is_active)
                                                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 011.06 1.06L10 11.06l3.72 3.72a.75.75 0 011.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                                    <path fill-rule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clip-rule="evenodd" />
                                                 </svg>
                                             @else
                                                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path d="M10 12.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5z" />
-                                                    <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 010-1.186A10.004 10.004 0 0110 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0110 17c-4.257 0-7.893-2.66-9.336-6.41zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
                                                 </svg>
                                             @endif
                                             {{ $user->is_active ? 'Deactivate' : 'Activate' }}
@@ -245,7 +245,7 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                                         </svg>
                                     </div>
-                                    <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-white">No users found</h3>
+                                    <h3 class="mt-2 text-sm font-medium text-neutral-900 dark:text-neutral-200">No users found</h3>
                                     <p class="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Try adjusting your search or filter to find what you're looking for.</p>
                                 </div>
                             </td>

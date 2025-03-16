@@ -5,7 +5,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <a href="{{ route('umpire.matches') }}" wire:navigate 
-                       class="group flex items-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-medium text-zinc-500 shadow-sm transition hover:bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700">
+                       class="group flex items-center gap-1 text-sm font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-300 transition-colors">
                         <svg class="h-5 w-5 transition-transform group-hover:-translate-x-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                         </svg>
@@ -13,17 +13,17 @@
                     </a>
                 </div>
             </div>
-            
+
             <!-- Match Title Card -->
-            <div class="mt-6 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 p-6 shadow-lg">
+            <div class="mt-6 rounded-xl bg-primary p-6 shadow-lg">
                 <div class="flex items-center justify-between">
                     <h1 class="text-3xl font-bold text-white">
                         Match Information
                     </h1>
                     <span class="rounded-full px-4 py-1 text-sm font-semibold
-                        @if($match->status === 'completed') bg-green-100 text-green-800
-                        @elseif($match->status === 'in_progress') bg-yellow-100 text-yellow-800
-                        @else bg-blue-100 text-blue-800 @endif">
+                        @if($match->status === 'completed') bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400
+                        @elseif($match->status === 'in_progress') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400
+                        @else bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400 @endif">
                         {{ ucfirst($match->status ?? 'Unknown') }}
                     </span>
                 </div>
@@ -33,26 +33,26 @@
         <!-- Match Details -->
         <div class="space-y-6">
             <!-- Head to Head Section -->
-            <div class="rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800">
+            <div class="rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800 border-2 border-green-200 dark:border-green-900/30">
                 <div class="flex flex-col lg:flex-row items-center gap-6">
                     <!-- Player 1 Card -->
                     <div class="w-full lg:w-5/12">
-                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition-all duration-300 hover:border-blue-500/50 dark:hover:border-blue-500/50 hover:shadow-xl hover:scale-[1.02]">
+                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 border-2 border-green-300 dark:border-green-700 transition-all duration-300 hover:border-primary/50 dark:hover:border-primary/50 hover:shadow-xl hover:scale-[1.02]">
                             <!-- Player Image -->
-                            <div class="aspect-[4/3] w-full bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-700 dark:to-zinc-800 relative overflow-hidden">
+                            <div class="aspect-[4/3] w-full bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 relative overflow-hidden">
                                 @if($match->player1?->player?->profile_photo)
                                     <img src="{{ Storage::url($match->player1->player->profile_photo) }}" 
                                          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                          alt="{{ $match->player1?->name }}">
                                 @else
                                     <div class="flex h-full items-center justify-center">
-                                        <svg class="h-24 w-24 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="h-24 w-24 text-green-300 dark:text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                     </div>
                                 @endif
                                 <!-- Ranking Badge -->
-                                <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg transition-transform duration-300 group-hover:scale-110">
+                                <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg transition-transform duration-300 group-hover:scale-110">
                                     Rank #{{ $match->player1?->player?->ranking ?? 'N/A' }}
                                 </div>
                             </div>
@@ -72,7 +72,7 @@
                                 <!-- Stats Grid -->
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- Age -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Age</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -89,7 +89,7 @@
                                     </div>
 
                                     <!-- Playing Hand -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Hand</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,7 +102,7 @@
                                     </div>
 
                                     <!-- Match Stats -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Matches</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +115,7 @@
                                     </div>
 
                                     <!-- Win Rate -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Win Rate</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -145,9 +145,9 @@
                     </div>
 
                     <!-- VS Badge -->
-                    <div class="flex-shrink-0 flex flex-col items-center justify-center">
-                        <div class="rounded-full bg-red-500 p-4 shadow-lg">
-                            <span class="text-xl font-bold text-white">VS</span>
+                    <div class="ml-6 mr-6 flex-shrink-0 flex flex-col items-center justify-center">
+                        <div class="border-2 border-green-200 rounded-full bg-primary/10 dark:bg-primary/20 p-6">
+                            <span class="text-2xl font-bold text-primary dark:text-primary-light">VS</span>
                         </div>
                         @if($match->scheduled_at)
                             <div class="mt-2 text-center">
@@ -163,22 +163,22 @@
 
                     <!-- Player 2 Card -->
                     <div class="w-full lg:w-5/12">
-                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition-all duration-300 hover:border-blue-500/50 dark:hover:border-blue-500/50 hover:shadow-xl hover:scale-[1.02]">
+                        <div class="group overflow-hidden rounded-xl bg-white shadow-lg dark:bg-zinc-800 border-2 border-green-300 dark:border-green-700 transition-all duration-300 hover:border-primary/50 dark:hover:border-primary/50 hover:shadow-xl hover:scale-[1.02]">
                             <!-- Player Image -->
-                            <div class="aspect-[4/3] w-full bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-700 dark:to-zinc-800 relative overflow-hidden">
+                            <div class="aspect-[4/3] w-full bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30 relative overflow-hidden">
                                 @if($match->player2?->player?->profile_photo)
                                     <img src="{{ Storage::url($match->player2->player->profile_photo) }}" 
                                          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                                          alt="{{ $match->player2?->name }}">
                                 @else
                                     <div class="flex h-full items-center justify-center">
-                                        <svg class="h-24 w-24 text-zinc-300 dark:text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="h-24 w-24 text-green-300 dark:text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                     </div>
                                 @endif
                                 <!-- Ranking Badge -->
-                                <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg transition-transform duration-300 group-hover:scale-110">
+                                <div class="absolute top-4 right-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg transition-transform duration-300 group-hover:scale-110">
                                     Rank #{{ $match->player2?->player?->ranking ?? 'N/A' }}
                                 </div>
                             </div>
@@ -198,7 +198,7 @@
                                 <!-- Stats Grid -->
                                 <div class="grid grid-cols-2 gap-4">
                                     <!-- Age -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Age</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -215,7 +215,7 @@
                                     </div>
 
                                     <!-- Playing Hand -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Hand</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -228,7 +228,7 @@
                                     </div>
 
                                     <!-- Match Stats -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Matches</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -241,7 +241,7 @@
                                     </div>
 
                                     <!-- Win Rate -->
-                                    <div class="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-lg transition-all duration-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer text-center">
+                                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg transition-all duration-300 hover:bg-green-100 dark:hover:bg-green-800/30 cursor-pointer text-center border-2 border-green-200 dark:border-green-700">
                                         <div class="flex items-center justify-center gap-2">
                                             <span class="text-zinc-500 dark:text-zinc-400 text-sm">Win Rate</span>
                                             <svg class="w-4 h-4 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -277,9 +277,9 @@
             <!-- Match Details Section -->
             <div class="space-y-6">
                 <!-- Venue & Court Information -->
-                <div class="rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800">
+                <div class="rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800 border-2 border-green-200 dark:border-green-900/30">
                     <h2 class="mb-6 text-xl font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <svg class="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                         </svg>
@@ -287,14 +287,14 @@
                     </h2>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4">
-                            <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Venue</h3>
+                        <div class="border-2 border-green-200 bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                            <h3 class="text-sm font-medium text-green-700 dark:text-green-400">Venue</h3>
                             <p class="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">{{ $match->venue?->name ?? 'Not assigned' }}</p>
                             <p class="mt-1 text-sm text-zinc-600 dark:text-zinc-300">{{ $match->venue?->address ?? 'Address not available' }}</p>
                         </div>
                         
-                        <div class="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4">
-                            <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Court</h3>
+                        <div class="border-2 border-green-200 bg-green-50 dark:bg-green-900/20 rounded-lg p-4">
+                            <h3 class="text-sm font-medium text-green-700 dark:text-green-400">Court</h3>
                             <p class="mt-2 text-lg font-semibold text-zinc-900 dark:text-white">
                                 @if($match->court_number)
                                     Court {{ $match->court_number }}
@@ -307,11 +307,11 @@
                 </div>
 
                 <!-- Match Details -->
-                <div class="rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800">
+                <div class="border-2 border-green-200 rounded-xl bg-white p-6 shadow-lg dark:bg-zinc-800">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
                             </svg>
                             Match Details
                         </h2>
@@ -327,7 +327,7 @@
                             </span>
 
                             <!-- Action Button based on match status -->
-                            @if($match->isScheduled())
+                            @if($match->isScheduled() && $match->umpire_id === auth()->id())
                                 <button 
                                     wire:click="openScoringModal"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500"
@@ -337,54 +337,75 @@
                                     </svg>
                                     Start Match
                                 </button>
-                            @elseif($match->isLive())
+                            @elseif($match->isLive() && $match->umpire_id === auth()->id())
                                 <button 
                                     wire:click="openScoringModal"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
                                 >
                                     <svg class="-ml-0.5 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347c-.75.412-1.667-.13-1.667-.986V5.653Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 0 1 0 1.953l-7.108 4.062A1.125 1.125 0 0 1 3 16.81V8.688ZM12.75 8.688c0-.864.933-1.405 1.683-.977l7.108 4.062a1.125 1.125 0 0 1 0 1.953l-7.108 4.062a1.125 1.125 0 0 1-1.683-.977V8.688Z" />
                                     </svg>
                                     Continue Match
                                 </button>
                             @elseif($match->isCompleted())
-                                <button 
-                                    wire:click="openScoringModal"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-500"
-                                >
+                                <div class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600">
                                     <svg class="-ml-0.5 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5" />
                                     </svg>
-                                    View Match Details
-                                </button>
+                                    Match Completed
+                                </div>
                             @endif
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Schedule Information -->
-                        <div class="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-4">
-                            <h3 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Schedule</h3>
-                            <div class="mt-2 space-y-2">
-                                <p class="text-lg font-semibold text-zinc-900 dark:text-white">
-                                    {{ $match->scheduled_at ? $match->scheduled_at->format('M d, Y') : 'Date not set' }}
-                                </p>
-                                <p class="text-md text-zinc-700 dark:text-zinc-300">
-                                    {{ $match->scheduled_at ? $match->scheduled_at->format('h:i A') : 'Time not set' }}
-                                </p>
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                    @if($match->status === 'completed') bg-green-100 text-green-800
-                                    @elseif($match->status === 'in_progress') bg-yellow-100 text-yellow-800
-                                    @else bg-blue-100 text-blue-800 @endif">
-                                    {{ ucfirst($match->status) }}
-                                </span>
+                        <div class="rounded-xl bg-white dark:bg-zinc-800 shadow-lg p-6 border-2 border-green-200 dark:border-green-900/30">
+                            <div class="relative">
+                                <!-- Status Badge - Positioned Absolute Top Right -->
+                                <div class="absolute top-0 right-0">
+                                    <span class="inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium
+                                        @if($match->status === 'completed') bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-400
+                                        @elseif($match->status === 'in_progress') bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-400
+                                        @else bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-400 @endif">
+                                        {{ ucfirst($match->status) }}
+                                    </span>
+                                </div>
+
+                                <!-- Header -->
+                                <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                                    <svg class="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                                    </svg>
+                                    Schedule Details
+                                </h3>
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <!-- Date and Time -->
+                                <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                                    <div class="flex items-center gap-2 text-green-700 dark:text-green-400 mb-2">
+                                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                        </svg>
+                                        <span class="text-sm font-medium">Match Time</span>
+                                    </div>
+                                    <p class="text-lg font-semibold text-zinc-900 dark:text-white">
+                                        {{ $match->scheduled_at ? $match->scheduled_at->format('M d, Y') : 'Date not set' }}
+                                    </p>
+                                    <p class="text-md text-zinc-700 dark:text-zinc-300">
+                                        {{ $match->scheduled_at ? $match->scheduled_at->format('h:i A') : 'Time not set' }}
+                                    </p>
+                                </div>
 
                                 @if($match->status === 'completed')
-                                    <div class="mt-4 pt-4 border-t border-zinc-200 dark:border-zinc-600">
-                                        <h4 class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Match Result</h4>
-                                        <div class="mt-2">
-                                            <div class="flex items-center gap-2">
-                                                <span class="text-lg font-bold text-green-600 dark:text-green-400">
+                                    <!-- Match Result -->
+                                    <div class="pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                                        <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+                                            <h4 class="text-sm font-medium text-green-700 dark:text-green-400 mb-3">Match Result</h4>
+                                            <div class="flex items-center gap-3">
+                                                <span class="text-amber-500 text-2xl" title="Winner">👑</span>
+                                                <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
                                                     @if($match->final_winner_id)
                                                         @if($match->final_winner_id === $match->player1_id && $match->player1)
                                                             {{ $match->player1->name }}
@@ -397,10 +418,9 @@
                                                         No Winner Declared
                                                     @endif
                                                 </span>
-                                                <span class="text-2xl">👑</span>
                                             </div>
-                                            <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-                                                Completed at: {{ $match->completed_at ? $match->completed_at->format('d M Y H:i') : 'N/A' }}
+                                            <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+                                                Completed: {{ $match->completed_at ? $match->completed_at->format('M d, Y h:i A') : 'N/A' }}
                                             </p>
                                         </div>
                                     </div>
@@ -409,16 +429,21 @@
                         </div>
 
                         <!-- Scoring Section -->
-                        <div class="bg-white dark:bg-zinc-800 shadow rounded-lg p-4">
-                            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4">Match Score</h3>
+                        <div class="rounded-xl bg-white dark:bg-zinc-800 shadow-lg p-6 border-2 border-green-200 dark:border-green-900/30">
+                            <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 0 1-.982-3.172M9.497 14.25a7.454 7.454 0 0 0 .981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 0 0 7.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 0 0 2.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 0 1 2.916.52 6.003 6.003 0 0 1-5.395 4.972m0 0a6.726 6.726 0 0 1-2.749 1.35m0 0a6.772 6.772 0 0 1-3.044 0" />
+                                </svg>
+                                Match Score
+                            </h3>
                             
                             @if($match->status !== 'scheduled')
                                 <div class="space-y-4">
                                     <!-- Sets Display -->
                                     @foreach($sets as $setNumber => $score)
-                                        <div class="flex items-center justify-between p-3 bg-zinc-50 dark:bg-zinc-700 rounded-lg">
-                                            <span class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Set {{ $setNumber }}</span>
-                                            <div class="flex items-center gap-2">
+                                        <div class="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                                            <span class="text-sm font-medium text-green-700 dark:text-green-400">Set {{ $setNumber }}</span>
+                                            <div class="flex items-center gap-3">
                                                 <span class="text-lg font-bold text-zinc-900 dark:text-zinc-100">
                                                     {{ $score['player1'] }} - {{ $score['player2'] }}
                                                 </span>
@@ -438,9 +463,9 @@
                                                     }
                                                 @endphp
                                                 @if($setWinner && $winnerName)
-                                                    <div class="flex items-center gap-1">
-                                                        <span class="text-yellow-500" title="Set Winner">👑</span>
-                                                        <span class="text-sm font-medium text-green-600 dark:text-green-400">
+                                                    <div class="flex items-center gap-2 px-2 py-1 bg-green-100 dark:bg-green-800 rounded-full">
+                                                        <span class="text-amber-500" title="Set Winner">👑</span>
+                                                        <span class="text-sm font-medium text-green-700 dark:text-green-300">
                                                             {{ $winnerName }}
                                                         </span>
                                                     </div>
@@ -450,7 +475,13 @@
                                     @endforeach
                                 </div>
                             @else
-                                <p class="text-center text-zinc-500 dark:text-zinc-400">Match hasn't started yet</p>
+                                <div class="rounded-lg border-2 border-dashed border-green-200 dark:border-green-700 p-6 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-primary dark:text-green-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                    </svg>
+                                    <h3 class="mt-2 text-sm font-medium text-zinc-900 dark:text-white">Match not started</h3>
+                                    <p class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">The match scoring will appear here once the game begins.</p>
+                                </div>
                             @endif
                         </div>
                     </div>
