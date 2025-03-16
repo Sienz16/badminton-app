@@ -38,7 +38,7 @@
                                     <flux:label for="player1" class="text-green-900 dark:text-green-100">Player 1</flux:label>
                                     <div class="mt-2">
                                         <flux:select 
-                                            wire:model="player1Id" 
+                                            wire:model.live="player1Id" 
                                             class="w-full bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-700 dark:focus:ring-green-500"
                                         >
                                             <option value="">Select Player 1</option>
@@ -58,7 +58,7 @@
                                             class="w-full bg-green-50 border-green-200 focus:border-green-500 focus:ring-green-500 dark:bg-green-900/30 dark:border-green-700 dark:focus:ring-green-500"
                                         >
                                             <option value="">Select Player 2</option>
-                                            @foreach($players as $player)
+                                            @foreach($players->where('id', '!=', $player1Id) as $player)
                                                 <option value="{{ $player->id }}">{{ $player->name }}</option>
                                             @endforeach
                                         </flux:select>

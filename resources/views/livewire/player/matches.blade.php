@@ -49,9 +49,42 @@
 
         <!-- Match List -->
         <div class="space-y-4">
+            <!-- Upcoming Matches -->
             @if($activeTab === 'upcoming')
                 @forelse($upcomingMatches as $match)
-                    <!-- Add your upcoming match card layout here -->
+                    <div class="flex flex-col space-y-4">
+                        <!-- Match Card -->
+                        <a href="{{ route('player.matches.show', $match) }}" wire:navigate
+                           class="block overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800 border-2 border-green-300 dark:border-green-700 transition-all duration-300 hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div>
+                                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                                                {{ $match->player1?->name ?? 'Player 1' }} vs {{ $match->player2?->name ?? 'Player 2' }}
+                                            </h3>
+                                            <div class="mt-1 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                <flux:icon name="user" class="mr-1.5 h-4 w-4" />
+                                                {{ __('Umpire:') }} {{ $match->umpireUser?->name ?? __('Not assigned') }}
+                                            </div>
+                                            <div class="mt-1 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                <flux:icon name="calendar" class="mr-1.5 h-4 w-4" />
+                                                {{ $match->scheduled_at->format('d M Y, h:i A') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                                            {{ __('Match Status') }}
+                                        </div>
+                                        <div class="mt-1 text-lg font-bold text-blue-600 dark:text-blue-400">
+                                            {{ __('Upcoming') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 @empty
                     <div class="rounded-lg border-2 border-dashed border-gray-200 p-12 text-center dark:border-gray-700">
                         <div class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600">
@@ -63,7 +96,56 @@
                 @endforelse
             @elseif($activeTab === 'live')
                 @forelse($liveMatches as $match)
-                    <!-- Add your live match card layout here -->
+                    <div class="flex flex-col space-y-4">
+                        <!-- Match Card -->
+                        <a href="{{ route('player.matches.show', $match) }}" wire:navigate
+                           class="block overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800 border-2 border-green-300 dark:border-green-700 transition-all duration-300 hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
+                            <div class="p-6">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <div>
+                                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+                                                {{ $match->player1?->name ?? 'Player 1' }} vs {{ $match->player2?->name ?? 'Player 2' }}
+                                            </h3>
+                                            <div class="mt-1 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                                <flux:icon name="user" class="mr-1.5 h-4 w-4" />
+                                                {{ __('Umpire:') }} {{ $match->umpireUser?->name ?? __('Not assigned') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $match->current_score }}</div>
+                                        <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Current Score') }}</div>
+                                        <div class="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
+                                            {{ __('In Progress') }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Set Scores -->
+                                <div class="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        @foreach(range(1, 3) as $setNumber)
+                                        @php
+                                            $setScore = DB::table('match_sets')
+                                                ->where('match_id', $match->id)
+                                                ->where('set_number', $setNumber)
+                                                ->first();
+                                        @endphp
+                                        <div class="text-center">
+                                            <div class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                                                SET {{ $setNumber }}
+                                            </div>
+                                            <div class="text-lg font-bold text-gray-900 dark:text-white">
+                                                {{ $setScore?->player1_score ?? '0' }} - {{ $setScore?->player2_score ?? '0' }}
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 @empty
                     <div class="rounded-lg border-2 border-dashed border-gray-200 p-12 text-center dark:border-gray-700">
                         <div class="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600">
@@ -77,7 +159,8 @@
                 @forelse($completedMatches as $match)
                     <div class="flex flex-col space-y-4">
                         <!-- Match Card -->
-                        <div class="overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800">
+                        <a href="{{ route('player.matches.show', $match) }}" wire:navigate
+                           class="block overflow-hidden rounded-lg bg-white shadow dark:bg-zinc-800 border-2 border-green-300 dark:border-green-700 transition-all duration-300 hover:shadow-lg hover:border-primary/50 dark:hover:border-primary/50">
                             <div class="p-6">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-3">
@@ -134,7 +217,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @empty
                     <div class="rounded-lg border-2 border-dashed border-gray-200 p-12 text-center dark:border-gray-700">
