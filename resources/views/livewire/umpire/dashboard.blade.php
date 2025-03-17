@@ -94,18 +94,6 @@
                         <div class="absolute inset-0 bg-gradient-to-br from-green-500/0 via-blue-500/0 to-purple-500/0 opacity-0 
                                     group-hover:opacity-10 transition-opacity duration-500"></div>
 
-                        <!-- Assigned to me badge -->
-                        @if($match->isAssignedToMe)
-                            <div class="absolute left-4 top-4">
-                                <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs 
-                                           font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
-                                           group-hover:bg-green-200 dark:group-hover:bg-green-800/40
-                                           transition-colors duration-300">
-                                    Assigned to me
-                                </span>
-                            </div>
-                        @endif
-
                         <!-- Status Badge and Court (Top Right) -->
                         <div class="absolute right-4 top-4 flex items-center gap-2">
                             @if($match->court_number)
@@ -249,6 +237,18 @@
                                 {{ $match->umpireUser?->name ?? 'Not assigned' }}
                             </div>
                         </div>
+
+                        <!-- Assigned to me badge - New position -->
+                        @if($match->isAssignedToMe)
+                            <div class="absolute bottom-4 right-4">
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-blue-100 px-3 py-1 text-xs 
+                                            font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400
+                                            group-hover:bg-green-200 dark:group-hover:bg-green-800/40
+                                            transition-colors duration-300">
+                                    Assigned to me
+                                </span>
+                            </div>
+                        @endif
                     </a>
                 @empty
                     <div class="col-span-full rounded-xl border border-neutral-200 p-8 text-center dark:border-neutral-700">

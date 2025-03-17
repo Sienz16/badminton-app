@@ -255,12 +255,17 @@ class Show extends Component
         // Update the matchStatus property
         $this->matchStatus = 'completed';
         
-        // Update matches_played for both players only when match completes
-        Player::where('user_id', $this->match->player1_id)->increment('matches_played');
-        Player::where('user_id', $this->match->player2_id)->increment('matches_played');
-        
-        // Update winner's matches_won
-        Player::where('user_id', $player->id)->increment('matches_won');
+        // Only update matches_played and matches_won after the match is fully completed
+        if ($this->match->status === 'completed') {
+            // Update matches_played for both players
+            Player::whereIn('user_id', [
+                $this->match->player1_id,
+                $this->match->player2_id
+            ])->increment('matches_played');
+            
+            // Update winner's matches_won
+            Player::where('user_id', $player->id)->increment('matches_won');
+        }
         
         session()->flash('success', 'Match completed successfully.');
     }
