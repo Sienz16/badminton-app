@@ -80,7 +80,7 @@
         </div>
 
         <!-- Pagination -->
-        <div class="mt-4">
+        <div class="mt-6 pt-6 border-t border-zinc-200 dark:border-zinc-700">
             {{ $venues->links() }}
         </div>
 

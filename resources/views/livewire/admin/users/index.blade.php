@@ -214,25 +214,20 @@
                                             </flux:button>
                                         </flux:modal.trigger>
                                     @endif
-                                    <flux:button 
-                                        size="xs" 
-                                        variant="{{ $user->is_active ? 'danger' : 'success' }}"
-                                        wire:click="toggleUserStatus({{ $user->id }})"
-                                        wire:confirm="Are you sure you want to {{ $user->is_active ? 'deactivate' : 'activate' }} this user?"
-                                    >
-                                        <span class="flex items-center gap-1">
-                                            @if($user->is_active)
+                                    <flux:modal.trigger name="delete-user-modal">
+                                        <flux:button 
+                                            size="xs"
+                                            variant="danger"
+                                            wire:click="$set('selectedUserId', {{ $user->id }})"
+                                        >
+                                            <span class="flex items-center gap-1">
                                                 <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M4 10a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H4.75A.75.75 0 014 10z" clip-rule="evenodd" />
+                                                    <path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 006 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 10.23 1.482l.149-.022.841 10.518A2.75 2.75 0 007.596 19h4.807a2.75 2.75 0 002.742-2.53l.841-10.52.149.023a.75.75 0 00.23-1.482A41.03 41.03 0 0014 4.193V3.75A2.75 2.75 0 0011.25 1h-2.5zM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4zM8.58 7.72a.75.75 0 00-1.5.06l.3 7.5a.75.75 0 101.5-.06l-.3-7.5zm4.34.06a.75.75 0 10-1.5-.06l-.3 7.5a.75.75 0 101.5.06l.3-7.5z" clip-rule="evenodd" />
                                                 </svg>
-                                            @else
-                                                <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
-                                                </svg>
-                                            @endif
-                                            {{ $user->is_active ? 'Deactivate' : 'Activate' }}
-                                        </span>
-                                    </flux:button>
+                                                Delete
+                                            </span>
+                                        </flux:button>
+                                    </flux:modal.trigger>
                                 </div>
                             </td>
                         </tr>
@@ -489,5 +484,60 @@
                 </flux:button>
             </div>
         </form>
+    </flux:modal>
+
+    <!-- Delete User Modal -->
+    <flux:modal name="delete-user-modal" focusable>
+        <div class="p-6">
+            <div class="mb-6">
+                <flux:heading size="lg">Delete User Account</flux:heading>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Are you sure you want to delete this user account? This action cannot be undone.
+                </p>
+            </div>
+
+            <!-- Warning Message -->
+            <div class="mt-4 rounded-md bg-red-50 p-4 dark:bg-red-900/50">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-red-800 dark:text-red-200">
+                            This will:
+                        </p>
+                        <ul class="mt-2 list-disc list-inside text-sm text-red-700 dark:text-red-300">
+                            <li>Delete all personal information</li>
+                            <li>Remove profile photo and related media</li>
+                            <li>Anonymize completed match history</li>
+                            <li>Remove umpire assignments</li>
+                            <li>Delete player statistics and rankings</li>
+                        </ul>
+                        <p class="mt-2 text-sm text-red-700 dark:text-red-300">
+                            Note: Users with active or upcoming matches cannot be deleted.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end gap-3">
+                <flux:modal.close>
+                    <flux:button variant="ghost">
+                        Cancel
+                    </flux:button>
+                </flux:modal.close>
+
+                <flux:button 
+                    variant="danger"
+                    wire:click="deleteUser"
+                    wire:loading.attr="disabled"
+                >
+                    <span wire:loading.remove wire:target="deleteUser">Delete Account</span>
+                    <span wire:loading wire:target="deleteUser">Deleting...</span>
+                </flux:button>
+            </div>
+        </div>
     </flux:modal>
 </div>
