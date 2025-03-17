@@ -152,6 +152,11 @@ class Venues extends Component
         }
     }
 
+    public function paginationView()
+    {
+        return 'vendor.livewire.custom-pagination';
+    }
+
     public function render()
     {
         $venues = Venue::when($this->search, function($query) {

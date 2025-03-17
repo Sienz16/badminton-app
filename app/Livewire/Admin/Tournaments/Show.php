@@ -9,7 +9,9 @@ use App\Models\GameMatch;
 use App\Models\Venue;
 use App\Models\User;
 use App\Models\Player;
+use App\Models\Court;
 use App\Models\Umpire;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 #[Layout('components.layouts.app')]
@@ -43,6 +45,21 @@ class Show extends Component
     public $matchWinner = null;
     public bool $currentSetCompleted = false;
     public bool $showNextSetButton = false;
+
+    // Add these properties for edit form
+    public $editDate;
+    public $editStartTime;
+    public $editVenueId;
+    public $editCourtNumber;
+    public $editUmpireId;
+    public $editPlayer1Id;
+    public $editPlayer2Id;
+    public $editAvailableCourts = [];
+
+    protected $listeners = [
+        'refreshComponent' => '$refresh',
+        'match-updated' => '$refresh'
+    ];
 
     public function openUmpireModal()
     {
@@ -124,6 +141,22 @@ class Show extends Component
 
         $this->isMatchLive = $this->match->status === 'in_progress';
         $this->updateCanDeclareWinner();
+
+        // Initialize properties
+        $this->editAvailableCourts = [];
+        
+        // If we have a match loaded, prepare the edit data
+        if ($this->match && $this->match->venue_id) {
+            $venue = Venue::find($this->match->venue_id);
+            if ($venue) {
+                $this->editAvailableCourts = range(1, $venue->number_of_courts);
+            }
+        }
+
+        // Load available courts for the current venue
+        if ($this->match->venue_id) {
+            $this->loadAvailableCourts($this->match->venue_id);
+        }
     }
 
     public function openScoringModal()
@@ -417,18 +450,143 @@ class Show extends Component
                $p1Score >= 30 || $p2Score >= 30;
     }
 
+    public function updatedEditVenueId($value)
+    {
+        $this->loadAvailableCourts($value);
+    }
+
+    private function loadAvailableCourts($venueId)
+    {
+        $this->editAvailableCourts = [];
+        
+        if ($venueId) {
+            $venue = Venue::find($venueId);
+            if ($venue) {
+                // Get all courts for this venue
+                $courts = Court::where('venue_id', $venueId)
+                    ->orderBy('number')
+                    ->pluck('number')
+                    ->toArray();
+                
+                if (empty($courts)) {
+                    // Fallback to venue's number_of_courts if no Court records exist
+                    $this->editAvailableCourts = range(1, $venue->number_of_courts);
+                } else {
+                    $this->editAvailableCourts = $courts;
+                }
+            }
+        }
+    }
+
+    public function prepareEdit()
+    {
+        // Load fresh data with relationships
+        $this->match = $this->match->fresh([
+            'player1.player',
+            'player2.player',
+            'venue',
+            'umpireUser',
+            'umpire',
+            'court'
+        ]);
+
+        // Set all edit properties
+        $this->editPlayer1Id = $this->match->player1_id;
+        $this->editPlayer2Id = $this->match->player2_id;
+        $this->editUmpireId = $this->match->umpire_id;
+        $this->editVenueId = $this->match->venue_id;
+        $this->editCourtNumber = $this->match->court_number;
+        
+        if ($this->match->scheduled_at) {
+            $scheduledAt = Carbon::parse($this->match->scheduled_at);
+            $this->editDate = $scheduledAt->format('Y-m-d');
+            $this->editStartTime = $scheduledAt->format('H:i');
+        }
+
+        // Load courts for the selected venue
+        if ($this->editVenueId) {
+            $this->loadAvailableCourts($this->editVenueId);
+        }
+
+        // Dispatch the modal open event
+        $this->dispatch('open-modal', 'edit-match-modal');
+    }
+
+    public function updateMatch()
+    {
+        $this->validate([
+            'editDate' => 'required|date',
+            'editStartTime' => 'required',
+            'editVenueId' => 'required|exists:venues,id',
+            'editCourtNumber' => 'required|integer',
+            'editUmpireId' => 'required|exists:users,id',
+            'editPlayer1Id' => 'required|exists:users,id',
+            'editPlayer2Id' => 'required|exists:users,id|different:editPlayer1Id',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            // Combine date and time for scheduled_at
+            $scheduledAt = Carbon::parse($this->editDate . ' ' . $this->editStartTime);
+
+            // Update the match properties
+            $this->match->scheduled_at = $scheduledAt;
+            $this->match->venue_id = $this->editVenueId;
+            $this->match->court_number = $this->editCourtNumber;
+            $this->match->umpire_id = $this->editUmpireId;
+            $this->match->player1_id = $this->editPlayer1Id;
+            $this->match->player2_id = $this->editPlayer2Id;
+            
+            // Save the match
+            $this->match->save();
+
+            // Update court availability
+            $court = Court::where('venue_id', $this->editVenueId)
+                ->where('number', $this->editCourtNumber)
+                ->first();
+
+            if ($court) {
+                $court->update([
+                    'match_id' => $this->match->id,
+                    'schedule_date' => $this->editDate,
+                    'start_time' => $this->editStartTime,
+                    'end_time' => Carbon::parse($this->editStartTime)->addHour()->format('H:i:s')
+                ]);
+            }
+
+            DB::commit();
+
+            // Refresh the match with relationships
+            $this->match = GameMatch::with([
+                'player1.player',
+                'player2.player',
+                'venue',
+                'umpireUser',
+                'umpire',
+                'court'
+            ])->find($this->match->id);
+
+            $this->dispatch('match-updated');
+            $this->dispatch('close-modal');
+            session()->flash('success', 'Match updated successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger()->error('Failed to update match', [
+                'match_id' => $this->match->id,
+                'error' => $e->getMessage()
+            ]);
+            session()->flash('error', 'Failed to update match. Please try again.');
+        }
+    }
+
     public function render()
     {
         return view('livewire.admin.tournaments.show', [
             'venues' => Venue::all(),
             'players' => User::where('role_id', 'player')->get(),
             'umpires' => User::where('role_id', 'umpire')->get(),
-            'playerMatches' => GameMatch::where(function($query) {
-                $query->where('player1_id', $this->match->player1_id)
-                      ->orWhere('player2_id', $this->match->player1_id)
-                      ->orWhere('player1_id', $this->match->player2_id)
-                      ->orWhere('player2_id', $this->match->player2_id);
-            })->where('status', 'completed')->get()
         ]);
     }
 }

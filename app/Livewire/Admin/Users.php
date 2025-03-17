@@ -5,12 +5,14 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Player;
 use App\Models\Umpire;
+use App\Models\GameMatch;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\DB;  
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class Users extends Component
 {
@@ -218,5 +220,98 @@ class Users extends Component
     public function mount()
     {
         $this->selectedRole = 'umpire';
+    }
+
+    public function deleteUser()
+    {
+        try {
+            DB::beginTransaction();
+
+            $user = User::findOrFail($this->selectedUserId);
+
+            // Prevent self-deletion
+            if ($user->id === Auth::id()) {
+                session()->flash('error', 'You cannot delete your own account.');
+                $this->js("document.querySelector('[data-modal=\"delete-user-modal\"]').close()");
+                return;
+            }
+
+            // Check for active matches
+            $activeMatches = GameMatch::where(function($query) use ($user) {
+                $query->where('player1_id', $user->id)
+                      ->orWhere('player2_id', $user->id)
+                      ->orWhere('umpire_id', $user->id);
+            })
+            ->whereIn('status', ['scheduled', 'in_progress'])
+            ->count();
+
+            if ($activeMatches > 0) {
+                session()->flash('error', 'Cannot delete user with active or upcoming matches. Please reassign or cancel these matches first.');
+                $this->js("document.querySelector('[data-modal=\"delete-user-modal\"]').close()");
+                return;
+            }
+
+            // Handle completed matches
+            $completedMatches = GameMatch::where(function($query) use ($user) {
+                $query->where('player1_id', $user->id)
+                      ->orWhere('player2_id', $user->id);
+            })
+            ->where('status', 'completed')
+            ->get();
+
+            foreach ($completedMatches as $match) {
+                // Update match sets to remove winner reference if it's this user
+                DB::table('match_sets')
+                    ->where('match_id', $match->id)
+                    ->where('winner_id', $user->id)
+                    ->update(['winner_id' => null]);
+
+                // Update final winner reference if it's this user
+                if ($match->final_winner_id === $user->id) {
+                    $match->update(['final_winner_id' => null]);
+                }
+
+                // Anonymize the player references
+                if ($match->player1_id === $user->id) {
+                    $match->player1_id = null;
+                }
+                if ($match->player2_id === $user->id) {
+                    $match->player2_id = null;
+                }
+                $match->save();
+            }
+
+            // Handle umpired matches
+            GameMatch::where('umpire_id', $user->id)
+                     ->update(['umpire_id' => null]);
+
+            // Delete profile photo if exists
+            if ($user->player) {
+                if ($user->player->profile_photo && Storage::disk('public')->exists($user->player->profile_photo)) {
+                    Storage::disk('public')->delete($user->player->profile_photo);
+                }
+            } elseif ($user->umpire) {
+                if ($user->umpire->profile_photo && Storage::disk('public')->exists($user->umpire->profile_photo)) {
+                    Storage::disk('public')->delete($user->umpire->profile_photo);
+                }
+            }
+
+            // Delete the user and related records
+            $user->delete();
+
+            DB::commit();
+
+            $this->selectedUserId = null;
+            $this->js("document.querySelector('[data-modal=\"delete-user-modal\"]').close()");
+            session()->flash('success', 'User account deleted successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            logger()->error('Failed to delete user', [
+                'user_id' => $this->selectedUserId,
+                'error' => $e->getMessage()
+            ]);
+            session()->flash('error', 'Failed to delete user. Please try again.');
+        }
     }
 }

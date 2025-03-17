@@ -177,9 +177,17 @@
                                     <div class="text-center">
                                         <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $match->final_score }}</div>
                                         <div class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Final Score') }}</div>
-                                        <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $match->winner_id === Auth::id() ? __('Won') : __('Lost') }}
-                                        </div>
+                                        @if($match->final_winner_id === Auth::id())
+                                            <div class="mt-2 inline-flex items-center gap-1 rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                                                <flux:icon name="trophy" class="h-4 w-4" />
+                                                {{ __('Victory!') }}
+                                            </div>
+                                        @else
+                                            <div class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-700 dark:bg-red-900/30 dark:text-red-400">
+                                                <flux:icon name="x-circle" class="h-4 w-4" />
+                                                {{ __('Defeated') }}
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 
