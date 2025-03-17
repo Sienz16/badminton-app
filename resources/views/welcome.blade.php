@@ -294,105 +294,91 @@
                     </div>
                 </section>
 
-                <!-- Top Players Rankings Section -->
-                <section class="relative py-24 bg-gradient-to-b from-emerald-50 to-white dark:from-emerald-950 dark:to-gray-900">
-                    <!-- Decorative background elements -->
-                    <div class="absolute inset-0">
-                        <div class="absolute inset-0 bg-[linear-gradient(30deg,#10B98130_12%,transparent_12.5%,transparent_87%,#10B98130_87.5%,#10B98130_100%)] opacity-20 dark:opacity-10"></div>
-                        <div class="absolute inset-0 bg-[linear-gradient(150deg,#10B98130_12%,transparent_12.5%,transparent_87%,#10B98130_87.5%,#10B98130_100%)] opacity-20 dark:opacity-10"></div>
-                    </div>
+                <!-- Top Players Section -->
+                @php
+                // Get top ranked players based on win rate
+                $topPlayers = App\Models\Player::with('user')
+                    ->where('matches_played', '>', 0) // Only include players who have played matches
+                    ->select('*')
+                    ->selectRaw('(CAST(matches_won AS FLOAT) / matches_played * 100) as win_rate')
+                    ->orderByDesc('win_rate')
+                    ->orderByDesc('matches_played') // Secondary sort by matches played
+                    ->limit(5) // Get top 5 players
+                    ->get()
+                    ->map(function($player) {
+                        return [
+                            'name' => $player->user->name,
+                            'matches_played' => $player->matches_played,
+                            'matches_won' => $player->matches_won,
+                            'win_rate' => number_format(($player->matches_won / $player->matches_played * 100), 1)
+                        ];
+                    });
 
-                    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                // For debugging
+                // dd($topPlayers);
+                @endphp
+
+                <section id="top-players" class="py-16">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <!-- Section Header -->
-                        <div class="text-center mb-16">
-                            <div class="flex items-center justify-center space-x-4 mb-4">
+                        <div class="text-center max-w-3xl mx-auto mb-16">
+                            <div class="flex items-center justify-center space-x-4">
                                 <div class="h-px w-8 bg-emerald-600 dark:bg-emerald-400"></div>
                                 <h2 class="text-sm font-semibold leading-7 text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
                                     Rankings
                                 </h2>
                                 <div class="h-px w-8 bg-emerald-600 dark:bg-emerald-400"></div>
                             </div>
-                            <h3 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl font-['Poppins']">
+                            <p class="mt-2 text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl">
                                 Top Ranked Players
-                            </h3>
-                            <p class="mt-4 text-lg text-gray-600 dark:text-gray-300">
-                                Our elite players with the highest win rates in tournaments
+                            </p>
+                            <p class="mt-4 text-lg leading-8 text-neutral-600 dark:text-neutral-400">
+                                Our highest performing players based on win rate and match participation
                             </p>
                         </div>
 
-                        <!-- Rankings Grid -->
-                        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                            <!-- Player Card 1 (Champion) -->
-                            <div class="relative group">
-                                <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                                <div class="relative bg-white dark:bg-gray-800 rounded-lg p-6">
-                                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                        Win Rate: 92.5%
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-shrink-0">
-                                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-300 flex items-center justify-center">
-                                                <span class="text-2xl font-bold text-white">#1</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Viktor Axelsen</h3>
-                                            <p class="text-emerald-600 dark:text-emerald-400">Denmark</p>
-                                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                                Matches: 120 | Wins: 111
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @php
+                                // Define rank colors
+                                $rankColors = [
+                                    0 => 'bg-yellow-500', // Gold for 1st
+                                    1 => 'bg-neutral-400', // Silver for 2nd
+                                    2 => 'bg-amber-600', // Bronze for 3rd
+                                    3 => 'bg-emerald-500', // Green for 4th
+                                    4 => 'bg-blue-500', // Blue for 5th
+                                ];
+                            @endphp
 
-                            <!-- Player Card 2 -->
-                            <div class="relative group">
-                                <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                                <div class="relative bg-white dark:bg-gray-800 rounded-lg p-6">
-                                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                        Win Rate: 88.3%
-                                    </div>
+                            @forelse($topPlayers as $index => $player)
+                                <div class="bg-white dark:bg-neutral-800 rounded-xl shadow-lg p-6 transform hover:scale-105 transition-transform duration-300">
                                     <div class="flex items-center space-x-4">
                                         <div class="flex-shrink-0">
-                                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-gray-300 to-gray-200 flex items-center justify-center">
-                                                <span class="text-2xl font-bold text-gray-800">#2</span>
+                                            <div class="w-14 h-14 rounded-full {{ $rankColors[$index] ?? 'bg-emerald-500' }} flex items-center justify-center shadow-lg">
+                                                <span class="text-2xl font-bold text-white">#{{ $index + 1 }}</span>
                                             </div>
                                         </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Kento Momota</h3>
-                                            <p class="text-emerald-600 dark:text-emerald-400">Japan</p>
-                                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                                Matches: 103 | Wins: 91
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xl font-semibold text-neutral-900 dark:text-white truncate">
+                                                {{ $player['name'] }}
                                             </p>
+                                            <div class="flex flex-col mt-2 gap-1">
+                                                <div class="flex items-center">
+                                                    <span class="text-lg text-emerald-500 dark:text-emerald-400 font-bold">
+                                                        {{ $player['win_rate'] }}% Win Rate
+                                                    </span>
+                                                </div>
+                                                <span class="text-sm text-neutral-600 dark:text-neutral-400">
+                                                    Won {{ $player['matches_won'] }} of {{ $player['matches_played'] }} matches
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- Player Card 3 -->
-                            <div class="relative group">
-                                <div class="absolute -inset-0.5 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-                                <div class="relative bg-white dark:bg-gray-800 rounded-lg p-6">
-                                    <div class="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-                                        Win Rate: 85.7%
-                                    </div>
-                                    <div class="flex items-center space-x-4">
-                                        <div class="flex-shrink-0">
-                                            <div class="w-16 h-16 rounded-full bg-gradient-to-r from-amber-700 to-amber-600 flex items-center justify-center">
-                                                <span class="text-2xl font-bold text-white">#3</span>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Anders Antonsen</h3>
-                                            <p class="text-emerald-600 dark:text-emerald-400">Japan</p>
-                                            <p class="mt-2 text-sm text-gray-600 dark:text-gray-300">
-                                                Matches: 98 | Wins: 84
-                                            </p>
-                                        </div>
-                                    </div>
+                            @empty
+                                <div class="col-span-full text-center text-neutral-600 dark:text-neutral-400">
+                                    No ranked players yet.
                                 </div>
-                            </div>
+                            @endforelse
                         </div>
                     </div>
                 </section>

@@ -20,34 +20,22 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Tab Buttons -->
         <div class="flex justify-center space-x-4 mb-8">
-            <button 
-                type="button"
-                wire:click="$set('activeTab', 'today')" 
-                class="px-6 py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 hover:scale-105
-                {{ $activeTab === 'today' ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300' }}"
-            >
+            <button wire:click="$set('activeTab', 'today')" 
+                    class="px-4 py-2 rounded-lg {{ $activeTab === 'today' ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                 Today's Matches
             </button>
-            <button 
-                type="button"
-                wire:click="$set('activeTab', 'upcoming')" 
-                class="px-6 py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 hover:scale-105
-                {{ $activeTab === 'upcoming' ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300' }}"
-            >
-                Upcoming
+            <button wire:click="$set('activeTab', 'upcoming')"
+                    class="px-4 py-2 rounded-lg {{ $activeTab === 'upcoming' ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
+                Upcoming Matches
             </button>
-            <button 
-                type="button"
-                wire:click="$set('activeTab', 'past')" 
-                class="px-6 py-3 rounded-lg font-semibold shadow-sm transition-all duration-200 hover:scale-105
-                {{ $activeTab === 'past' ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300' }}"
-            >
+            <button wire:click="$set('activeTab', 'past')"
+                    class="px-4 py-2 rounded-lg {{ $activeTab === 'past' ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }}">
                 Past Matches
             </button>
         </div>
 
-        <!-- Matches Grid -->
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <!-- Matches Grid with preserved scroll -->
+        <div wire:ignore.self class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             @if($activeTab === 'today')
                 @forelse($this->todayMatches as $match)
                     <div class="group relative block overflow-hidden rounded-xl border-2 border-gray-400/50 
@@ -55,8 +43,7 @@
                                transition duration-300 ease-in-out
                                hover:border-gray-500 dark:hover:border-gray-700
                                hover:shadow-lg hover:shadow-gray-500/10 
-                               hover:transform hover:scale-[1.02]
-                               dark:hover:shadow-gray-800/20">
+                               hover:transform hover:scale-[1.02]">
                         
                         <!-- Status Badge (Top Right) -->
                         <div class="absolute right-4 top-4 flex items-center gap-2">
@@ -163,6 +150,12 @@
                         No matches scheduled for today
                     </div>
                 @endforelse
+
+                @if($this->todayMatches instanceof \Illuminate\Pagination\LengthAwarePaginator && $this->todayMatches->hasPages())
+                    <div class="col-span-full mt-6" id="pagination-section">
+                        {{ $this->todayMatches->links() }}
+                    </div>
+                @endif
             @elseif($activeTab === 'upcoming')
                 @forelse($this->upcomingMatches as $match)
                     <div class="group relative block overflow-hidden rounded-xl border-2 border-gray-400/50 
@@ -170,8 +163,7 @@
                                transition duration-300 ease-in-out
                                hover:border-gray-500 dark:hover:border-gray-700
                                hover:shadow-lg hover:shadow-gray-500/10 
-                               hover:transform hover:scale-[1.02]
-                               dark:hover:shadow-gray-800/20">
+                               hover:transform hover:scale-[1.02]">
                         
                         <!-- Content -->
                         <div class="p-6">
@@ -264,6 +256,12 @@
                         No upcoming matches scheduled
                     </div>
                 @endforelse
+
+                @if($this->upcomingMatches instanceof \Illuminate\Pagination\LengthAwarePaginator && $this->upcomingMatches->hasPages())
+                    <div class="col-span-full mt-6" id="pagination-section">
+                        {{ $this->upcomingMatches->links() }}
+                    </div>
+                @endif
             @elseif($activeTab === 'past')
                 @forelse($this->pastMatches as $match)
                     <div class="group relative block overflow-hidden rounded-xl border-2 border-gray-400/50 
@@ -271,8 +269,7 @@
                                transition duration-300 ease-in-out
                                hover:border-gray-500 dark:hover:border-gray-700
                                hover:shadow-lg hover:shadow-gray-500/10 
-                               hover:transform hover:scale-[1.02]
-                               dark:hover:shadow-gray-800/20">
+                               hover:transform hover:scale-[1.02]">
                         
                         <!-- Content -->
                         <div class="p-6">
@@ -389,19 +386,32 @@
                         No past matches found
                     </div>
                 @endforelse
+
+                @if($this->pastMatches instanceof \Illuminate\Pagination\LengthAwarePaginator && $this->pastMatches->hasPages())
+                    <div class="col-span-full mt-6" id="pagination-section">
+                        {{ $this->pastMatches->links() }}
+                    </div>
+                @endif
             @endif
         </div>
 
         <!-- View All Matches Button -->
         <div class="mt-12 text-center">
             <a href="{{ route('login') }}" 
-                class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-300"
-            >
-                Sign in to view all matches
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
+                class="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition-colors duration-300">
+                Login to view more  ->
             </a>
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.addEventListener('livewire:initialized', () => {
+        Livewire.on('gotoTop', () => {
+            // Smooth scroll to pagination section instead of jumping to top
+            document.getElementById('pagination-section')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+@endpush

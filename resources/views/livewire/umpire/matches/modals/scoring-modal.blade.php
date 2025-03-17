@@ -16,8 +16,8 @@
                 }
                 
                 try {
-                    const startTime = new Date(playedAt.replace(/-/g, '/'));
-                    const endTime = new Date(completedAt.replace(/-/g, '/'));
+                    const startTime = new Date(playedAt);
+                    const endTime = new Date(completedAt);
                     const diff = Math.floor((endTime - startTime) / 1000);
                     
                     if (isNaN(diff)) {
@@ -42,7 +42,7 @@
                 }
                 
                 try {
-                    const startTime = new Date(playedAt.replace(/-/g, '/'));
+                    const startTime = new Date(playedAt);
                     const now = new Date();
                     const diff = Math.floor((now - startTime) / 1000);
                     
@@ -71,10 +71,12 @@
             // Calculate initial time
             this.calculateCurrentTime();
             
-            // Start the interval
-            this.matchTimer = setInterval(() => {
-                this.calculateCurrentTime();
-            }, 1000);
+            // Start the interval only if match is in progress
+            if (this.matchStatus === 'in_progress') {
+                this.matchTimer = setInterval(() => {
+                    this.calculateCurrentTime();
+                }, 1000);
+            }
         }
     }"
     x-init="(() => {
