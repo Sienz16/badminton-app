@@ -2,30 +2,41 @@
 
 namespace App\Livewire\Admin\Tournaments;
 
-use App\Models\User;
-use App\Models\Venue;
 use App\Models\Court;
 use App\Models\GameMatch;
-use Livewire\Component;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\Venue;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 use Livewire\WithPagination;
 
+#[Layout('components.layouts.app')]
 class Index extends Component
 {
     use WithPagination;
 
     public $player1Id = '';
+
     public $player2Id = '';
+
     public $venueId = '';
+
     public $courtNumber = '';
+
     public $date = '';
+
     public $startTime = '';
+
     public $umpireId = '';
-    
+
     public $availableCourts = [];
+
     public $venues = [];
+
     public $players = [];
+
     public $umpires = [];
 
     public function mount()
@@ -61,29 +72,29 @@ class Index extends Component
     private function updateAvailableCourts()
     {
         $this->availableCourts = [];
-        
-        if (!$this->venueId || !$this->date || !$this->startTime) {
+
+        if (! $this->venueId || ! $this->date || ! $this->startTime) {
             return;
         }
 
         // Get all courts for the selected venue
         $courts = Court::where('venue_id', $this->venueId)->get();
-        
-        $startDateTime = Carbon::parse($this->date . ' ' . $this->startTime);
+
+        $startDateTime = Carbon::parse($this->date.' '.$this->startTime);
         $endDateTime = $startDateTime->copy()->addHour();
 
         // Get booked courts for the selected date/time range
         $bookedCourts = GameMatch::where('venue_id', $this->venueId)
-            ->where(function($query) use ($startDateTime, $endDateTime) {
-                $query->where(function($q) use ($startDateTime, $endDateTime) {
+            ->where(function ($query) use ($startDateTime, $endDateTime) {
+                $query->where(function ($q) use ($startDateTime, $endDateTime) {
                     $q->whereIn('status', ['scheduled', 'in_progress'])
-                      ->where(function($q) use ($startDateTime, $endDateTime) {
-                          // Check if the new match time overlaps with existing matches
-                          $q->where(function($q) use ($startDateTime, $endDateTime) {
-                              $q->where('scheduled_at', '<', $endDateTime)
-                                ->where(DB::raw('DATE_ADD(scheduled_at, INTERVAL 1 HOUR)'), '>', $startDateTime);
-                          });
-                      });
+                        ->where(function ($q) use ($startDateTime, $endDateTime) {
+                            // Check if the new match time overlaps with existing matches
+                            $q->where(function ($q) use ($startDateTime, $endDateTime) {
+                                $q->where('scheduled_at', '<', $endDateTime)
+                                    ->where(DB::raw('DATE_ADD(scheduled_at, INTERVAL 1 HOUR)'), '>', $startDateTime);
+                            });
+                        });
                 });
             })
             ->pluck('court_number')
@@ -91,7 +102,7 @@ class Index extends Component
 
         // Filter available courts
         foreach ($courts as $court) {
-            if (!in_array($court->number, $bookedCourts) && 
+            if (! in_array($court->number, $bookedCourts) &&
                 $court->status !== 'maintenance') {
                 $this->availableCourts[] = $court->number;
             }
@@ -110,16 +121,17 @@ class Index extends Component
             'umpireId' => 'required|exists:users,id|different:player1Id|different:player2Id',
         ]);
 
-        $startDateTime = $this->date . ' ' . $this->startTime;
-        $endDateTime = date('Y-m-d H:i:s', strtotime($startDateTime . ' +1 hour'));
+        $startDateTime = $this->date.' '.$this->startTime;
+        $endDateTime = date('Y-m-d H:i:s', strtotime($startDateTime.' +1 hour'));
 
         // Check if court is available
         $court = Court::where('venue_id', $this->venueId)
             ->where('number', $this->courtNumber)
             ->first();
 
-        if (!$court || $court->status === 'maintenance') {
+        if (! $court || $court->status === 'maintenance') {
             $this->addError('courtNumber', 'This court is not available.');
+
             return;
         }
 
@@ -127,21 +139,22 @@ class Index extends Component
         $existingMatch = GameMatch::where('venue_id', $this->venueId)
             ->where('court_number', $this->courtNumber)
             ->whereIn('status', ['scheduled', 'in_progress'])
-            ->where(function($query) use ($startDateTime, $endDateTime) {
-                $query->where(function($q) use ($startDateTime, $endDateTime) {
+            ->where(function ($query) use ($startDateTime, $endDateTime) {
+                $query->where(function ($q) use ($startDateTime, $endDateTime) {
                     $q->where('scheduled_at', '>=', $startDateTime)
-                      ->where('scheduled_at', '<', $endDateTime);
+                        ->where('scheduled_at', '<', $endDateTime);
                 });
             })
             ->exists();
 
         if ($existingMatch) {
             $this->addError('courtNumber', 'This court has an overlapping match scheduled.');
+
             return;
         }
 
         DB::transaction(function () use ($court, $startDateTime) {
-            $match = new GameMatch();
+            $match = new GameMatch;
             $match->player1_id = $this->player1Id;
             $match->player2_id = $this->player2Id;
             $match->venue_id = $this->venueId;
@@ -155,13 +168,13 @@ class Index extends Component
                 'match_id' => $match->id,
                 'schedule_date' => $this->date,
                 'start_time' => $this->startTime,
-                'end_time' => date('H:i:s', strtotime($startDateTime . ' +1 hour'))
+                'end_time' => date('H:i:s', strtotime($startDateTime.' +1 hour')),
             ]);
         });
 
         $this->dispatch('match-created');
         $this->js("document.querySelector('[data-modal=\"create-match-modal\"]').close()");
-        
+
         // Reset only the form fields, not the loaded data
         $this->resetForm();
     }
@@ -196,4 +209,3 @@ class Index extends Component
         return 'vendor.livewire.custom-pagination';
     }
 }
-

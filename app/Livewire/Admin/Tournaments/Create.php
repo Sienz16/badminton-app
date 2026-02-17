@@ -2,21 +2,30 @@
 
 namespace App\Livewire\Admin\Tournaments;
 
+use App\Models\GameMatch;
 use App\Models\User;
 use App\Models\Venue;
-use App\Models\GameMatch;
-use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
 
+#[Layout('components.layouts.app')]
 class Create extends Component
 {
     public $player1Id = '';
+
     public $player2Id = '';
+
     public $venueId = '';
+
     public $courtNumber = '';
+
     public $date = '';
+
     public $startTime = '';
+
     public $endTime = '';
+
     public $umpireId = '';
 
     public function createMatch()
@@ -33,13 +42,13 @@ class Create extends Component
         ]);
 
         DB::transaction(function () {
-            $match = new GameMatch();
+            $match = new GameMatch;
             $match->player1_id = $this->player1Id;
             $match->player2_id = $this->player2Id;
             $match->venue_id = $this->venueId;
             $match->court_number = $this->courtNumber;
-            $match->scheduled_at = $this->date . ' ' . $this->startTime;
-            $match->played_at = $this->date . ' ' . $this->endTime;
+            $match->scheduled_at = $this->date.' '.$this->startTime;
+            $match->played_at = $this->date.' '.$this->endTime;
             $match->umpire_id = $this->umpireId;
             $match->status = 'scheduled';
             $match->save();

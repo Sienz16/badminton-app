@@ -2,41 +2,55 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
+use App\Models\GameMatch;
 use App\Models\Player;
 use App\Models\Umpire;
-use App\Models\GameMatch;
-use Livewire\Component;
-use Livewire\WithPagination;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\DB;  
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+use Livewire\WithFileUploads;
+use Livewire\WithPagination;
 
+#[Layout('components.layouts.app')]
 class Users extends Component
 {
-    use WithPagination;
     use WithFileUploads;
+    use WithPagination;
 
     public $search = '';
+
     public $selectedRole = 'umpire';
+
     public $verificationStatus = '';
+
     public $selectedUserId = null;
 
     // Form properties for creating new users
     public $name = '';
+
     public $email = '';
+
     public $phone_number = '';
+
     public $role_id = 'player';
+
     public $bio = '';
+
     public $profile_photo;
+
     public $password = '';
 
     // Player specific fields
     public $date_of_birth = '';
+
     public $gender = '';
+
     public $nationality = '';
+
     public $playing_hand = 'right';
 
     // Umpire specific fields
@@ -50,13 +64,13 @@ class Users extends Component
         'bio' => 'nullable|string',
         'profile_photo' => 'nullable|image|max:1024', // max 1MB
         'password' => 'required|min:8',
-        
+
         // Player validation rules
         'date_of_birth' => 'required_if:role_id,player|date',
         'gender' => 'required_if:role_id,player|in:male,female,other',
         'nationality' => 'required_if:role_id,player|string|max:50',
         'playing_hand' => 'required_if:role_id,player|in:right,left,ambidextrous',
-        
+
         // Umpire validation rules
         'status' => 'required_if:role_id,umpire|in:available,unavailable',
     ];
@@ -110,7 +124,7 @@ class Users extends Component
 
             $this->resetForm();
             session()->flash('success', 'User created successfully.');
-            
+
             // Use the same JS dispatch pattern as seen in your venues component
             $this->js("document.querySelector('[data-modal=\"create-user-modal\"]').close()");
 
@@ -124,9 +138,9 @@ class Users extends Component
         $this->reset([
             'name', 'email', 'phone_number', 'role_id', 'bio', 'profile_photo',
             'date_of_birth', 'gender', 'nationality', 'playing_hand',
-            'status', 'password'
+            'status', 'password',
         ]);
-        
+
         $this->resetValidation();
         $this->role_id = 'player';
     }
@@ -135,20 +149,20 @@ class Users extends Component
     {
         try {
             $user = User::findOrFail($this->selectedUserId);
-            
-            if (!$user->admin_verified_at) {
+
+            if (! $user->admin_verified_at) {
                 $user->admin_verified_at = now();
                 $user->email_verified_at = now();
                 $user->save();
             }
-            
+
             $this->selectedUserId = null;
-            
+
             // Use JS dispatch to force modal close
             $this->js("document.querySelector('[data-modal=\"verify-user-modal\"]').close()");
-            
+
         } catch (\Exception $e) {
-            logger('Error verifying user: ' . $e->getMessage());
+            logger('Error verifying user: '.$e->getMessage());
             throw $e;
         }
     }
@@ -206,7 +220,7 @@ class Users extends Component
     public function toggleUserStatus($userId)
     {
         $user = User::findOrFail($userId);
-        $user->is_active = !$user->is_active;
+        $user->is_active = ! $user->is_active;
         $user->save();
     }
 
@@ -233,31 +247,33 @@ class Users extends Component
             if ($user->id === Auth::id()) {
                 session()->flash('error', 'You cannot delete your own account.');
                 $this->js("document.querySelector('[data-modal=\"delete-user-modal\"]').close()");
+
                 return;
             }
 
             // Check for active matches
-            $activeMatches = GameMatch::where(function($query) use ($user) {
+            $activeMatches = GameMatch::where(function ($query) use ($user) {
                 $query->where('player1_id', $user->id)
-                      ->orWhere('player2_id', $user->id)
-                      ->orWhere('umpire_id', $user->id);
+                    ->orWhere('player2_id', $user->id)
+                    ->orWhere('umpire_id', $user->id);
             })
-            ->whereIn('status', ['scheduled', 'in_progress'])
-            ->count();
+                ->whereIn('status', ['scheduled', 'in_progress'])
+                ->count();
 
             if ($activeMatches > 0) {
                 session()->flash('error', 'Cannot delete user with active or upcoming matches. Please reassign or cancel these matches first.');
                 $this->js("document.querySelector('[data-modal=\"delete-user-modal\"]').close()");
+
                 return;
             }
 
             // Handle completed matches
-            $completedMatches = GameMatch::where(function($query) use ($user) {
+            $completedMatches = GameMatch::where(function ($query) use ($user) {
                 $query->where('player1_id', $user->id)
-                      ->orWhere('player2_id', $user->id);
+                    ->orWhere('player2_id', $user->id);
             })
-            ->where('status', 'completed')
-            ->get();
+                ->where('status', 'completed')
+                ->get();
 
             foreach ($completedMatches as $match) {
                 // Update match sets to remove winner reference if it's this user
@@ -283,7 +299,7 @@ class Users extends Component
 
             // Handle umpired matches
             GameMatch::where('umpire_id', $user->id)
-                     ->update(['umpire_id' => null]);
+                ->update(['umpire_id' => null]);
 
             // Delete profile photo if exists
             if ($user->player) {
@@ -309,7 +325,7 @@ class Users extends Component
             DB::rollBack();
             logger()->error('Failed to delete user', [
                 'user_id' => $this->selectedUserId,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
             session()->flash('error', 'Failed to delete user. Please try again.');
         }
